@@ -18,15 +18,30 @@ module stdlib_linalg
   public :: eigh
   public :: eigvals
   public :: eigvalsh
+  public :: expm, matrix_exp
   public :: eye
   public :: inv
   public :: invert
   public :: operator(.inv.)
+  public :: pinv
+  public :: pseudoinvert
+  public :: operator(.pinv.)
   public :: lstsq
   public :: lstsq_space
+  public :: constrained_lstsq
+  public :: constrained_lstsq_space
+  public :: weighted_lstsq
+  public :: solve_weighted_lstsq
+  public :: norm
+  public :: mnorm
+  public :: get_norm
   public :: solve
-  public :: solve_lu  
+  public :: solve_lu
+  public :: solve_chol
+  public :: solve_lower_chol
+  public :: solve_upper_chol
   public :: solve_lstsq
+  public :: solve_constrained_lstsq
   public :: trace
   public :: svd
   public :: svdvals
@@ -35,10 +50,13 @@ module stdlib_linalg
   public :: cross_product
   public :: qr
   public :: qr_space
+  public :: schur
+  public :: schur_space
   public :: is_square
   public :: is_diagonal
   public :: is_symmetric
   public :: is_skew_symmetric
+  public :: hermitian
   public :: is_hermitian
   public :: is_triangular
   public :: is_hessenberg
@@ -229,74 +247,74 @@ module stdlib_linalg
       !
       ! Vector to matrix
       !
-      module function diag_rsp(v) result(res)
+      pure module function diag_rsp(v) result(res)
         real(sp), intent(in) :: v(:)
         real(sp) :: res(size(v),size(v))
       end function diag_rsp
-      module function diag_rdp(v) result(res)
+      pure module function diag_rdp(v) result(res)
         real(dp), intent(in) :: v(:)
         real(dp) :: res(size(v),size(v))
       end function diag_rdp
-      module function diag_csp(v) result(res)
+      pure module function diag_csp(v) result(res)
         complex(sp), intent(in) :: v(:)
         complex(sp) :: res(size(v),size(v))
       end function diag_csp
-      module function diag_cdp(v) result(res)
+      pure module function diag_cdp(v) result(res)
         complex(dp), intent(in) :: v(:)
         complex(dp) :: res(size(v),size(v))
       end function diag_cdp
-      module function diag_iint8(v) result(res)
+      pure module function diag_iint8(v) result(res)
         integer(int8), intent(in) :: v(:)
         integer(int8) :: res(size(v),size(v))
       end function diag_iint8
-      module function diag_iint16(v) result(res)
+      pure module function diag_iint16(v) result(res)
         integer(int16), intent(in) :: v(:)
         integer(int16) :: res(size(v),size(v))
       end function diag_iint16
-      module function diag_iint32(v) result(res)
+      pure module function diag_iint32(v) result(res)
         integer(int32), intent(in) :: v(:)
         integer(int32) :: res(size(v),size(v))
       end function diag_iint32
-      module function diag_iint64(v) result(res)
+      pure module function diag_iint64(v) result(res)
         integer(int64), intent(in) :: v(:)
         integer(int64) :: res(size(v),size(v))
       end function diag_iint64
-      module function diag_rsp_k(v,k) result(res)
+      pure module function diag_rsp_k(v,k) result(res)
         real(sp), intent(in) :: v(:)
         integer, intent(in) :: k
         real(sp) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_rsp_k
-      module function diag_rdp_k(v,k) result(res)
+      pure module function diag_rdp_k(v,k) result(res)
         real(dp), intent(in) :: v(:)
         integer, intent(in) :: k
         real(dp) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_rdp_k
-      module function diag_csp_k(v,k) result(res)
+      pure module function diag_csp_k(v,k) result(res)
         complex(sp), intent(in) :: v(:)
         integer, intent(in) :: k
         complex(sp) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_csp_k
-      module function diag_cdp_k(v,k) result(res)
+      pure module function diag_cdp_k(v,k) result(res)
         complex(dp), intent(in) :: v(:)
         integer, intent(in) :: k
         complex(dp) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_cdp_k
-      module function diag_iint8_k(v,k) result(res)
+      pure module function diag_iint8_k(v,k) result(res)
         integer(int8), intent(in) :: v(:)
         integer, intent(in) :: k
         integer(int8) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_iint8_k
-      module function diag_iint16_k(v,k) result(res)
+      pure module function diag_iint16_k(v,k) result(res)
         integer(int16), intent(in) :: v(:)
         integer, intent(in) :: k
         integer(int16) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_iint16_k
-      module function diag_iint32_k(v,k) result(res)
+      pure module function diag_iint32_k(v,k) result(res)
         integer(int32), intent(in) :: v(:)
         integer, intent(in) :: k
         integer(int32) :: res(size(v)+abs(k),size(v)+abs(k))
       end function diag_iint32_k
-      module function diag_iint64_k(v,k) result(res)
+      pure module function diag_iint64_k(v,k) result(res)
         integer(int64), intent(in) :: v(:)
         integer, intent(in) :: k
         integer(int64) :: res(size(v)+abs(k),size(v)+abs(k))
@@ -305,74 +323,74 @@ module stdlib_linalg
       !
       ! Matrix to vector
       !
-      module function diag_rsp_mat(A) result(res)
+      pure module function diag_rsp_mat(A) result(res)
         real(sp), intent(in) :: A(:,:)
         real(sp) :: res(minval(shape(A)))
       end function diag_rsp_mat
-      module function diag_rdp_mat(A) result(res)
+      pure module function diag_rdp_mat(A) result(res)
         real(dp), intent(in) :: A(:,:)
         real(dp) :: res(minval(shape(A)))
       end function diag_rdp_mat
-      module function diag_csp_mat(A) result(res)
+      pure module function diag_csp_mat(A) result(res)
         complex(sp), intent(in) :: A(:,:)
         complex(sp) :: res(minval(shape(A)))
       end function diag_csp_mat
-      module function diag_cdp_mat(A) result(res)
+      pure module function diag_cdp_mat(A) result(res)
         complex(dp), intent(in) :: A(:,:)
         complex(dp) :: res(minval(shape(A)))
       end function diag_cdp_mat
-      module function diag_iint8_mat(A) result(res)
+      pure module function diag_iint8_mat(A) result(res)
         integer(int8), intent(in) :: A(:,:)
         integer(int8) :: res(minval(shape(A)))
       end function diag_iint8_mat
-      module function diag_iint16_mat(A) result(res)
+      pure module function diag_iint16_mat(A) result(res)
         integer(int16), intent(in) :: A(:,:)
         integer(int16) :: res(minval(shape(A)))
       end function diag_iint16_mat
-      module function diag_iint32_mat(A) result(res)
+      pure module function diag_iint32_mat(A) result(res)
         integer(int32), intent(in) :: A(:,:)
         integer(int32) :: res(minval(shape(A)))
       end function diag_iint32_mat
-      module function diag_iint64_mat(A) result(res)
+      pure module function diag_iint64_mat(A) result(res)
         integer(int64), intent(in) :: A(:,:)
         integer(int64) :: res(minval(shape(A)))
       end function diag_iint64_mat
-      module function diag_rsp_mat_k(A,k) result(res)
+      pure module function diag_rsp_mat_k(A,k) result(res)
         real(sp), intent(in) :: A(:,:)
         integer, intent(in) :: k
         real(sp) :: res(minval(shape(A))-abs(k))
       end function diag_rsp_mat_k
-      module function diag_rdp_mat_k(A,k) result(res)
+      pure module function diag_rdp_mat_k(A,k) result(res)
         real(dp), intent(in) :: A(:,:)
         integer, intent(in) :: k
         real(dp) :: res(minval(shape(A))-abs(k))
       end function diag_rdp_mat_k
-      module function diag_csp_mat_k(A,k) result(res)
+      pure module function diag_csp_mat_k(A,k) result(res)
         complex(sp), intent(in) :: A(:,:)
         integer, intent(in) :: k
         complex(sp) :: res(minval(shape(A))-abs(k))
       end function diag_csp_mat_k
-      module function diag_cdp_mat_k(A,k) result(res)
+      pure module function diag_cdp_mat_k(A,k) result(res)
         complex(dp), intent(in) :: A(:,:)
         integer, intent(in) :: k
         complex(dp) :: res(minval(shape(A))-abs(k))
       end function diag_cdp_mat_k
-      module function diag_iint8_mat_k(A,k) result(res)
+      pure module function diag_iint8_mat_k(A,k) result(res)
         integer(int8), intent(in) :: A(:,:)
         integer, intent(in) :: k
         integer(int8) :: res(minval(shape(A))-abs(k))
       end function diag_iint8_mat_k
-      module function diag_iint16_mat_k(A,k) result(res)
+      pure module function diag_iint16_mat_k(A,k) result(res)
         integer(int16), intent(in) :: A(:,:)
         integer, intent(in) :: k
         integer(int16) :: res(minval(shape(A))-abs(k))
       end function diag_iint16_mat_k
-      module function diag_iint32_mat_k(A,k) result(res)
+      pure module function diag_iint32_mat_k(A,k) result(res)
         integer(int32), intent(in) :: A(:,:)
         integer, intent(in) :: k
         integer(int32) :: res(minval(shape(A))-abs(k))
       end function diag_iint32_mat_k
-      module function diag_iint64_mat_k(A,k) result(res)
+      pure module function diag_iint64_mat_k(A,k) result(res)
         integer(int64), intent(in) :: A(:,:)
         integer, intent(in) :: k
         integer(int64) :: res(minval(shape(A))-abs(k))
@@ -397,6 +415,21 @@ module stdlib_linalg
       module procedure trace_iint64
   end interface
 
+  ! Identity matrix 
+  interface eye
+    !! version: experimental
+    !!
+    !! Constructs the identity matrix
+    !! ([Specification](../page/specs/stdlib_linalg.html#eye-construct-the-identity-matrix))    
+      module procedure eye_rsp
+      module procedure eye_rdp
+      module procedure eye_csp
+      module procedure eye_cdp
+      module procedure eye_iint8
+      module procedure eye_iint16
+      module procedure eye_iint32
+      module procedure eye_iint64
+  end interface eye
 
   ! Outer product (of two vectors)
   interface outer_product
@@ -609,6 +642,57 @@ module stdlib_linalg
       module procedure is_hermitian_iint32
       module procedure is_hermitian_iint64
   end interface is_hermitian
+
+  interface hermitian
+    !! version: experimental
+    !!
+    !! Computes the Hermitian version of a rank-2 matrix.
+    !! For complex matrices, this returns `conjg(transpose(a))`.
+    !! For real or integer matrices, this returns `transpose(a)`.
+    !!
+    !! Usage:
+    !! ```
+    !! A  = reshape([(1, 2), (3, 4), (5, 6), (7, 8)], [2, 2])
+    !! AH = hermitian(A)
+    !! ```
+    !!
+    !! [Specification](../page/specs/stdlib_linalg.html#hermitian-compute-the-hermitian-version-of-a-rank-2-matrix)
+    !!
+
+    pure module function hermitian_rsp(a) result(ah)
+        real(sp), intent(in) :: a(:,:)
+        real(sp) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_rsp
+    pure module function hermitian_rdp(a) result(ah)
+        real(dp), intent(in) :: a(:,:)
+        real(dp) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_rdp
+    pure module function hermitian_csp(a) result(ah)
+        complex(sp), intent(in) :: a(:,:)
+        complex(sp) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_csp
+    pure module function hermitian_cdp(a) result(ah)
+        complex(dp), intent(in) :: a(:,:)
+        complex(dp) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_cdp
+    pure module function hermitian_iint8(a) result(ah)
+        integer(int8), intent(in) :: a(:,:)
+        integer(int8) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_iint8
+    pure module function hermitian_iint16(a) result(ah)
+        integer(int16), intent(in) :: a(:,:)
+        integer(int16) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_iint16
+    pure module function hermitian_iint32(a) result(ah)
+        integer(int32), intent(in) :: a(:,:)
+        integer(int32) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_iint32
+    pure module function hermitian_iint64(a) result(ah)
+        integer(int64), intent(in) :: a(:,:)
+        integer(int64) :: ah(size(a, 2), size(a, 1))
+    end function hermitian_iint64
+
+  end interface hermitian
 
 
   ! Check for triangularity
@@ -963,6 +1047,347 @@ module stdlib_linalg
          type(linalg_state_type), optional, intent(out) :: err
      end subroutine stdlib_linalg_z_solve_lu_many
   end interface solve_lu     
+
+  ! One-shot Cholesky factorization and solve (uses POSV)
+  interface solve_chol
+     !! version: experimental 
+     !!
+     !! Solves the linear system \( A \cdot x = b \) for the unknown vector \( x \) from a 
+     !! symmetric positive definite matrix \( A \). Combines factorization and solve in one call.
+     !! ([Specification](../page/specs/stdlib_linalg.html#solve_chol-solve-spd-system-with-cholesky-factorization))
+     !!
+     !!### Summary 
+     !! One-shot factorization and solve for SPD systems (wraps LAPACK POSV).
+     !!
+     !!### Description
+     !! 
+     !! This interface computes both the Cholesky factorization and solves the linear system
+     !! in a single call. Use this for one-time solves. For repeated solves with the same 
+     !! matrix but different RHS, use `cholesky` + `solve_lower_chol`/`solve_upper_chol` for 
+     !! better performance.
+     !! Supported data types include `real` and `complex`.
+     !! By default, A is not overwritten. Set `overwrite_a=.true.` to allow in-place 
+     !! factorization for better performance.
+     !! 
+     !!@note The solution is based on LAPACK's `*POSV` routines.
+     !!        
+     pure module subroutine stdlib_linalg_s_solve_chol_one(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         real(sp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(sp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(sp), intent(inout), contiguous, target :: x(:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_s_solve_chol_one
+     pure module subroutine stdlib_linalg_d_solve_chol_one(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(dp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(dp), intent(inout), contiguous, target :: x(:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_d_solve_chol_one
+     pure module subroutine stdlib_linalg_c_solve_chol_one(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(sp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(sp), intent(inout), contiguous, target :: x(:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_c_solve_chol_one
+     pure module subroutine stdlib_linalg_z_solve_chol_one(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(dp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(dp), intent(inout), contiguous, target :: x(:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_z_solve_chol_one
+     pure module subroutine stdlib_linalg_s_solve_chol_many(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         real(sp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(sp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(sp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_s_solve_chol_many
+     pure module subroutine stdlib_linalg_d_solve_chol_many(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(dp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(dp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_d_solve_chol_many
+     pure module subroutine stdlib_linalg_c_solve_chol_many(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(sp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(sp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_c_solve_chol_many
+     pure module subroutine stdlib_linalg_z_solve_chol_many(a,b,x,lower,overwrite_a,err)     
+         !> Input SPD matrix a[n,n]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(dp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(dp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] Use lower triangular factorization? Default = .true.
+         logical(lk), optional, intent(in) :: lower
+         !> [optional] Can A data be overwritten and destroyed? Default = .false.
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_z_solve_chol_many
+  end interface solve_chol
+
+  ! Solve linear system using pre-computed LOWER Cholesky factor (subroutine interface)
+  interface solve_lower_chol
+     !! version: experimental 
+     !!
+     !! Solves the linear system \( A \cdot x = b \) for the unknown vector \( x \) from a 
+     !! symmetric positive definite matrix \( A \) using pre-computed LOWER Cholesky factor \( L \).
+     !! ([Specification](../page/specs/stdlib_linalg.html#solve_lower_chol-solve-using-lower-cholesky-factor))
+     !!
+     !!### Summary 
+     !! Subroutine interface for solving a linear system using pre-computed lower Cholesky factor.
+     !!
+     !!### Description
+     !! 
+     !! This interface solves a linear system using a pre-computed lower triangular Cholesky
+     !! factor \( L \) where \( A = L \cdot L^T \). The input matrix must come from a prior 
+     !! call to `cholesky` with `lower=.true.`.
+     !! Supported data types include `real` and `complex`.
+     !! 
+     !!@note The solution is based on LAPACK's `*POTRS` routines.
+     !!        
+     pure module subroutine stdlib_linalg_s_solve_lower_chol_one(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         real(sp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(sp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(sp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_s_solve_lower_chol_one
+     pure module subroutine stdlib_linalg_d_solve_lower_chol_one(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         real(dp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(dp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(dp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_d_solve_lower_chol_one
+     pure module subroutine stdlib_linalg_c_solve_lower_chol_one(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         complex(sp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(sp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(sp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_c_solve_lower_chol_one
+     pure module subroutine stdlib_linalg_z_solve_lower_chol_one(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         complex(dp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(dp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(dp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_z_solve_lower_chol_one
+     pure module subroutine stdlib_linalg_s_solve_lower_chol_many(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         real(sp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(sp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(sp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_s_solve_lower_chol_many
+     pure module subroutine stdlib_linalg_d_solve_lower_chol_many(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         real(dp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(dp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(dp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_d_solve_lower_chol_many
+     pure module subroutine stdlib_linalg_c_solve_lower_chol_many(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         complex(sp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(sp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(sp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_c_solve_lower_chol_many
+     pure module subroutine stdlib_linalg_z_solve_lower_chol_many(l,b,x,err)     
+         !> Input matrix l[n,n] containing lower Cholesky factor L from cholesky(...,lower=.true.)
+         complex(dp), intent(in) :: l(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(dp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(dp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_z_solve_lower_chol_many
+  end interface solve_lower_chol
+
+  ! Solve linear system using pre-computed UPPER Cholesky factor (subroutine interface)
+  interface solve_upper_chol
+     !! version: experimental 
+     !!
+     !! Solves the linear system \( A \cdot x = b \) for the unknown vector \( x \) from a 
+     !! symmetric positive definite matrix \( A \) using pre-computed UPPER Cholesky factor \( U \).
+     !! ([Specification](../page/specs/stdlib_linalg.html#solve_upper_chol-solve-using-upper-cholesky-factor))
+     !!
+     !!### Summary 
+     !! Subroutine interface for solving a linear system using pre-computed upper Cholesky factor.
+     !!
+     !!### Description
+     !! 
+     !! This interface solves a linear system using a pre-computed upper triangular Cholesky
+     !! factor \( U \) where \( A = U^T \cdot U \). The input matrix must come from a prior 
+     !! call to `cholesky` with `lower=.false.`.
+     !! Supported data types include `real` and `complex`.
+     !! 
+     !!@note The solution is based on LAPACK's `*POTRS` routines.
+     !!        
+     pure module subroutine stdlib_linalg_s_solve_upper_chol_one(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         real(sp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(sp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(sp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_s_solve_upper_chol_one
+     pure module subroutine stdlib_linalg_d_solve_upper_chol_one(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         real(dp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(dp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(dp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_d_solve_upper_chol_one
+     pure module subroutine stdlib_linalg_c_solve_upper_chol_one(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         complex(sp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(sp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(sp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_c_solve_upper_chol_one
+     pure module subroutine stdlib_linalg_z_solve_upper_chol_one(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         complex(dp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(dp), intent(in) :: b(:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(dp), intent(inout), contiguous, target :: x(:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_z_solve_upper_chol_one
+     pure module subroutine stdlib_linalg_s_solve_upper_chol_many(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         real(sp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(sp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(sp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_s_solve_upper_chol_many
+     pure module subroutine stdlib_linalg_d_solve_upper_chol_many(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         real(dp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         real(dp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         real(dp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_d_solve_upper_chol_many
+     pure module subroutine stdlib_linalg_c_solve_upper_chol_many(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         complex(sp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(sp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(sp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_c_solve_upper_chol_many
+     pure module subroutine stdlib_linalg_z_solve_upper_chol_many(u,b,x,err)     
+         !> Input matrix u[n,n] containing upper Cholesky factor U from cholesky(...,lower=.false.)
+         complex(dp), intent(in) :: u(:,:)
+         !> Right hand side vector or array, b[n] or b[n,nrhs]
+         complex(dp), intent(in) :: b(:,:)
+         !> Result array/matrix x[n] or x[n,nrhs]     
+         complex(dp), intent(inout), contiguous, target :: x(:,:)
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+     end subroutine stdlib_linalg_z_solve_upper_chol_many
+  end interface solve_upper_chol
      
   ! Least squares solution to system Ax=b, i.e. such that the 2-norm abs(b-Ax) is minimized.
   interface lstsq
@@ -1403,6 +1828,390 @@ module stdlib_linalg
       end subroutine stdlib_linalg_z_lstsq_space_many
   end interface lstsq_space
 
+  ! Equality-constrained least-squares, i.e. minimize the sum of squares
+  ! cost || Ax - b ||^2 subject to the equality constraint Cx = d.
+  interface constrained_lstsq
+    !!  version: experimental
+    !!
+    !!  Computes the solution of the equality constrained least-squares problem
+    !!
+    !!  minimize     || Ax - b ||²
+    !!  subject to      Cx = d
+    !!
+    !!  where A is of size `m x n` and C of size `p x n`.
+    !!  ([Specification](../page/specs/stdlib_linalg.html#constrained-lstsq))
+    !!
+    !!  ### Description
+    !!
+    !!  This interface provides methods for computing the solution of an equality-constrained
+    !!  least-squares problem using a function. Supported data types include `real` and
+    !!  `complex`. 
+    !!
+    !!  @note The solution is based on LAPACK's `*GGLSE` methods.
+    module function stdlib_linalg_s_constrained_lstsq(A, b, C, d, overwrite_matrices, err) result(x)
+        !> Least-squares cost
+        real(sp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        real(sp), intent(inout), target :: C(:, :), d(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag.
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Solution of the constrained least-squares problem.
+        real(sp), allocatable, target :: x(:)
+    end function stdlib_linalg_s_constrained_lstsq
+    module function stdlib_linalg_d_constrained_lstsq(A, b, C, d, overwrite_matrices, err) result(x)
+        !> Least-squares cost
+        real(dp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        real(dp), intent(inout), target :: C(:, :), d(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag.
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Solution of the constrained least-squares problem.
+        real(dp), allocatable, target :: x(:)
+    end function stdlib_linalg_d_constrained_lstsq
+    module function stdlib_linalg_c_constrained_lstsq(A, b, C, d, overwrite_matrices, err) result(x)
+        !> Least-squares cost
+        complex(sp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        complex(sp), intent(inout), target :: C(:, :), d(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag.
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Solution of the constrained least-squares problem.
+        complex(sp), allocatable, target :: x(:)
+    end function stdlib_linalg_c_constrained_lstsq
+    module function stdlib_linalg_z_constrained_lstsq(A, b, C, d, overwrite_matrices, err) result(x)
+        !> Least-squares cost
+        complex(dp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        complex(dp), intent(inout), target :: C(:, :), d(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag.
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Solution of the constrained least-squares problem.
+        complex(dp), allocatable, target :: x(:)
+    end function stdlib_linalg_z_constrained_lstsq
+  end interface
+
+  ! Equality-constrained least-squares, i.e. minimize the sum of squares
+  ! cost || Ax - b ||^2 subject to the equality constraint Cx = d.
+  interface solve_constrained_lstsq
+    !!  version: experimental
+    !!
+    !!  Computes the solution of the equality constrained least-squares problem
+    !!
+    !!  minimize     || Ax - b ||²
+    !!  subject to      Cx = d
+    !!
+    !!  where A is of size `m x n` and C of size `p x n`.
+    !!  ([Specification](../page/specs/stdlib_linalg.html#solve-constrained-lstsq))
+    !!
+    !!  ### Description
+    !!
+    !!  This interface provides methods for computing the solution of an equality-constrained
+    !!  least-squares problem using a subroutine. Supported data types include `real` and
+    !!  `complex`. If a pre-allocated workspace is provided, no internal memory allocation takes
+    !!  place.
+    !!
+    !!  @note The solution is based on LAPACK's `*GGLSE` methods.
+    module subroutine stdlib_linalg_s_solve_constrained_lstsq(A, b, C, d, x, storage, overwrite_matrices, err)
+        !> Least-squares cost.
+        real(sp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        real(sp), intent(inout), target :: C(:, :), d(:)
+        !> Solution vector.
+        real(sp), intent(out) :: x(:)
+        !> [optional] Storage.
+        real(sp), optional, intent(out), target :: storage(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag. On error if not requested, the code stops.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_s_solve_constrained_lstsq
+    module subroutine stdlib_linalg_d_solve_constrained_lstsq(A, b, C, d, x, storage, overwrite_matrices, err)
+        !> Least-squares cost.
+        real(dp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        real(dp), intent(inout), target :: C(:, :), d(:)
+        !> Solution vector.
+        real(dp), intent(out) :: x(:)
+        !> [optional] Storage.
+        real(dp), optional, intent(out), target :: storage(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag. On error if not requested, the code stops.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_d_solve_constrained_lstsq
+    module subroutine stdlib_linalg_c_solve_constrained_lstsq(A, b, C, d, x, storage, overwrite_matrices, err)
+        !> Least-squares cost.
+        complex(sp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        complex(sp), intent(inout), target :: C(:, :), d(:)
+        !> Solution vector.
+        complex(sp), intent(out) :: x(:)
+        !> [optional] Storage.
+        complex(sp), optional, intent(out), target :: storage(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag. On error if not requested, the code stops.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_c_solve_constrained_lstsq
+    module subroutine stdlib_linalg_z_solve_constrained_lstsq(A, b, C, d, x, storage, overwrite_matrices, err)
+        !> Least-squares cost.
+        complex(dp), intent(inout), target :: A(:, :), b(:)
+        !> Equality constraints.
+        complex(dp), intent(inout), target :: C(:, :), d(:)
+        !> Solution vector.
+        complex(dp), intent(out) :: x(:)
+        !> [optional] Storage.
+        complex(dp), optional, intent(out), target :: storage(:)
+        !> [optional] Can A and C be overwritten?
+        logical(lk), optional, intent(in) :: overwrite_matrices
+        !> [optional] State return flag. On error if not requested, the code stops.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_z_solve_constrained_lstsq
+  end interface
+
+  interface constrained_lstsq_space
+    !!  version: experimental
+    !!
+    !!  Computes the size of the workspace required by the constrained least-squares solver.
+    !!  ([Specification](../page/specs/stdlib_linalg.html#constrained-lstsq-space))
+    !!
+    !!  ### Description
+    !!
+    !!  This interface provides the size of the workspace array required by the constrained
+    !!  least-squares solver. It can be used to pre-allocate the working array in
+    !!  case several repeated solutions to a same system are sought. If pre-allocated,
+    !!  working arrays are provided, no internal allocation will take place.
+    !!
+    module subroutine stdlib_linalg_s_constrained_lstsq_space(A, C, lwork, err)
+        !> Least-squares cost.
+        real(sp), intent(in) :: A(:, :)
+        !> Equality constraints.
+        real(sp), intent(in) :: C(:, :)
+        integer(ilp), intent(out) :: lwork
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_s_constrained_lstsq_space
+    module subroutine stdlib_linalg_d_constrained_lstsq_space(A, C, lwork, err)
+        !> Least-squares cost.
+        real(dp), intent(in) :: A(:, :)
+        !> Equality constraints.
+        real(dp), intent(in) :: C(:, :)
+        integer(ilp), intent(out) :: lwork
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_d_constrained_lstsq_space
+    module subroutine stdlib_linalg_c_constrained_lstsq_space(A, C, lwork, err)
+        !> Least-squares cost.
+        complex(sp), intent(in) :: A(:, :)
+        !> Equality constraints.
+        complex(sp), intent(in) :: C(:, :)
+        integer(ilp), intent(out) :: lwork
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_c_constrained_lstsq_space
+    module subroutine stdlib_linalg_z_constrained_lstsq_space(A, C, lwork, err)
+        !> Least-squares cost.
+        complex(dp), intent(in) :: A(:, :)
+        !> Equality constraints.
+        complex(dp), intent(in) :: C(:, :)
+        integer(ilp), intent(out) :: lwork
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_z_constrained_lstsq_space
+  end interface
+
+  ! Weighted least-squares: minimize ||D(Ax - b)||^2 where D = diag(sqrt(w))
+  interface weighted_lstsq
+    !! version: experimental
+    !!
+    !! Computes the weighted least-squares solution to \( \min_x \|D(Ax - b)\|_2^2 \)
+    !! ([Specification](../page/specs/stdlib_linalg.html#weighted-lstsq))
+    !!
+    !!### Summary
+    !! Function interface for computing weighted least-squares via row scaling.
+    !!
+    !!### Description
+    !!
+    !! This interface provides methods for computing weighted least-squares by
+    !! transforming to ordinary least-squares through row scaling.
+    !! Supported data types include `real` and `complex`.
+    !!
+    !!@note The solution is based on LAPACK's `*GELSD` after applying diagonal weights.
+    !!@warning Avoid extreme weight ratios (e.g., max(w)/min(w) > 1e6) as this may 
+    !!         cause loss of precision in the SVD-based solver.
+    !!
+    module function stdlib_linalg_s_weighted_lstsq(w,a,b,cond,overwrite_a,rank,err) result(x)
+        !> Weight vector (must be positive, always real)
+        real(sp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        real(sp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        real(sp), intent(in) :: b(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(sp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Result array x(n)
+        real(sp), allocatable :: x(:)
+    end function stdlib_linalg_s_weighted_lstsq
+    module function stdlib_linalg_d_weighted_lstsq(w,a,b,cond,overwrite_a,rank,err) result(x)
+        !> Weight vector (must be positive, always real)
+        real(dp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        real(dp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        real(dp), intent(in) :: b(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(dp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Result array x(n)
+        real(dp), allocatable :: x(:)
+    end function stdlib_linalg_d_weighted_lstsq
+    module function stdlib_linalg_c_weighted_lstsq(w,a,b,cond,overwrite_a,rank,err) result(x)
+        !> Weight vector (must be positive, always real)
+        real(sp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        complex(sp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        complex(sp), intent(in) :: b(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(sp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Result array x(n)
+        complex(sp), allocatable :: x(:)
+    end function stdlib_linalg_c_weighted_lstsq
+    module function stdlib_linalg_z_weighted_lstsq(w,a,b,cond,overwrite_a,rank,err) result(x)
+        !> Weight vector (must be positive, always real)
+        real(dp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        complex(dp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        complex(dp), intent(in) :: b(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(dp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Result array x(n)
+        complex(dp), allocatable :: x(:)
+    end function stdlib_linalg_z_weighted_lstsq
+  end interface weighted_lstsq
+
+  ! Weighted least-squares subroutine: minimize ||D(Ax - b)||^2 where D = diag(sqrt(w))
+  interface solve_weighted_lstsq
+    !! version: experimental
+    !!
+    !! Computes the weighted least-squares solution to \( \min_x \|D(Ax - b)\|_2^2 \)
+    !! ([Specification](../page/specs/stdlib_linalg.html#solve-weighted-lstsq-compute-the-weighted-least-squares-solution-to-a-linear-matrix-equation-subroutine-interface))
+    !!
+    !!### Summary
+    !! Subroutine interface for computing weighted least-squares via row scaling.
+    !!
+    !!### Description
+    !!
+    !! This interface provides methods for computing weighted least-squares by
+    !! transforming to ordinary least-squares through row scaling, using a subroutine.
+    !! Supported data types include `real` and `complex`.
+    !!
+    !!@note The solution is based on LAPACK's `*GELSD` after applying diagonal weights.
+    !!@warning Avoid extreme weight ratios (e.g., max(w)/min(w) > 1e6) as this may
+    !!         cause loss of precision in the SVD-based solver.
+    !!
+    module subroutine stdlib_linalg_s_solve_weighted_lstsq(w,a,b,x,cond,overwrite_a,rank,err)
+        !> Weight vector (must be positive, always real)
+        real(sp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        real(sp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        real(sp), intent(in) :: b(:)
+        !> Result array x(n)
+        real(sp), intent(inout), contiguous, target :: x(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(sp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_s_solve_weighted_lstsq
+    module subroutine stdlib_linalg_d_solve_weighted_lstsq(w,a,b,x,cond,overwrite_a,rank,err)
+        !> Weight vector (must be positive, always real)
+        real(dp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        real(dp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        real(dp), intent(in) :: b(:)
+        !> Result array x(n)
+        real(dp), intent(inout), contiguous, target :: x(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(dp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_d_solve_weighted_lstsq
+    module subroutine stdlib_linalg_c_solve_weighted_lstsq(w,a,b,x,cond,overwrite_a,rank,err)
+        !> Weight vector (must be positive, always real)
+        real(sp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        complex(sp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        complex(sp), intent(in) :: b(:)
+        !> Result array x(n)
+        complex(sp), intent(inout), contiguous, target :: x(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(sp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_c_solve_weighted_lstsq
+    module subroutine stdlib_linalg_z_solve_weighted_lstsq(w,a,b,x,cond,overwrite_a,rank,err)
+        !> Weight vector (must be positive, always real)
+        real(dp), intent(in) :: w(:)
+        !> Input matrix a(m,n)
+        complex(dp), intent(inout), target :: a(:,:)
+        !> Right hand side vector b(m)
+        complex(dp), intent(in) :: b(:)
+        !> Result array x(n)
+        complex(dp), intent(inout), contiguous, target :: x(:)
+        !> [optional] cutoff for rank evaluation: singular values s(i)<=cond*maxval(s) are considered 0.
+        real(dp), optional, intent(in) :: cond
+        !> [optional] Can A data be overwritten and destroyed?
+        logical(lk), optional, intent(in) :: overwrite_a
+        !> [optional] Return rank of A
+        integer(ilp), optional, intent(out) :: rank
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_z_solve_weighted_lstsq
+  end interface solve_weighted_lstsq
+
   ! QR factorization of rank-2 array A
   interface qr
     !! version: experimental 
@@ -1440,6 +2249,23 @@ module stdlib_linalg
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine stdlib_linalg_s_qr
+
+      pure module subroutine stdlib_linalg_s_pivoting_qr(a, q, r, pivots, overwrite_a, storage, err)
+          !> Input matrix a[m, n]
+          real(sp), intent(inout), target :: a(:, :)
+          !> Orthogonal matrix Q ([m, m] or [m, k] if reduced)
+          real(sp), intent(out), contiguous, target :: q(:, :)
+          !> Upper triangular matrix R ([m, n] or [k, n] if reduced)
+          real(sp), intent(out), contiguous, target :: r(:, :)
+          !> Pivots.
+          integer(ilp), intent(out) :: pivots(:)
+          !> [optional] Can A data be overwritten and destroyed?
+          logical(lk), optional, intent(in) :: overwrite_a
+          !> [optional] Provide pre-allocated workspace, size to be checked with qr_space.
+          real(sp), intent(out), optional, target :: storage(:)
+          !> [optional] state return flag. On error if not requested, the code will stop.
+          type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_s_pivoting_qr
       pure module subroutine stdlib_linalg_d_qr(a,q,r,overwrite_a,storage,err) 
          !> Input matrix a[m,n]
          real(dp), intent(inout), target :: a(:,:)
@@ -1454,6 +2280,23 @@ module stdlib_linalg
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine stdlib_linalg_d_qr
+
+      pure module subroutine stdlib_linalg_d_pivoting_qr(a, q, r, pivots, overwrite_a, storage, err)
+          !> Input matrix a[m, n]
+          real(dp), intent(inout), target :: a(:, :)
+          !> Orthogonal matrix Q ([m, m] or [m, k] if reduced)
+          real(dp), intent(out), contiguous, target :: q(:, :)
+          !> Upper triangular matrix R ([m, n] or [k, n] if reduced)
+          real(dp), intent(out), contiguous, target :: r(:, :)
+          !> Pivots.
+          integer(ilp), intent(out) :: pivots(:)
+          !> [optional] Can A data be overwritten and destroyed?
+          logical(lk), optional, intent(in) :: overwrite_a
+          !> [optional] Provide pre-allocated workspace, size to be checked with qr_space.
+          real(dp), intent(out), optional, target :: storage(:)
+          !> [optional] state return flag. On error if not requested, the code will stop.
+          type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_d_pivoting_qr
       pure module subroutine stdlib_linalg_c_qr(a,q,r,overwrite_a,storage,err) 
          !> Input matrix a[m,n]
          complex(sp), intent(inout), target :: a(:,:)
@@ -1468,6 +2311,23 @@ module stdlib_linalg
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine stdlib_linalg_c_qr
+
+      pure module subroutine stdlib_linalg_c_pivoting_qr(a, q, r, pivots, overwrite_a, storage, err)
+          !> Input matrix a[m, n]
+          complex(sp), intent(inout), target :: a(:, :)
+          !> Orthogonal matrix Q ([m, m] or [m, k] if reduced)
+          complex(sp), intent(out), contiguous, target :: q(:, :)
+          !> Upper triangular matrix R ([m, n] or [k, n] if reduced)
+          complex(sp), intent(out), contiguous, target :: r(:, :)
+          !> Pivots.
+          integer(ilp), intent(out) :: pivots(:)
+          !> [optional] Can A data be overwritten and destroyed?
+          logical(lk), optional, intent(in) :: overwrite_a
+          !> [optional] Provide pre-allocated workspace, size to be checked with qr_space.
+          complex(sp), intent(out), optional, target :: storage(:)
+          !> [optional] state return flag. On error if not requested, the code will stop.
+          type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_c_pivoting_qr
       pure module subroutine stdlib_linalg_z_qr(a,q,r,overwrite_a,storage,err) 
          !> Input matrix a[m,n]
          complex(dp), intent(inout), target :: a(:,:)
@@ -1482,6 +2342,23 @@ module stdlib_linalg
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine stdlib_linalg_z_qr
+
+      pure module subroutine stdlib_linalg_z_pivoting_qr(a, q, r, pivots, overwrite_a, storage, err)
+          !> Input matrix a[m, n]
+          complex(dp), intent(inout), target :: a(:, :)
+          !> Orthogonal matrix Q ([m, m] or [m, k] if reduced)
+          complex(dp), intent(out), contiguous, target :: q(:, :)
+          !> Upper triangular matrix R ([m, n] or [k, n] if reduced)
+          complex(dp), intent(out), contiguous, target :: r(:, :)
+          !> Pivots.
+          integer(ilp), intent(out) :: pivots(:)
+          !> [optional] Can A data be overwritten and destroyed?
+          logical(lk), optional, intent(in) :: overwrite_a
+          !> [optional] Provide pre-allocated workspace, size to be checked with qr_space.
+          complex(dp), intent(out), optional, target :: storage(:)
+          !> [optional] state return flag. On error if not requested, the code will stop.
+          type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_z_pivoting_qr
   end interface qr
 
   ! Return the working array space required by the QR factorization solver
@@ -1507,6 +2384,17 @@ module stdlib_linalg
          !> State return flag. Returns an error if the query failed
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine get_qr_s_workspace
+
+      pure module subroutine get_pivoting_qr_s_workspace(a, lwork, pivoting, err)
+        !> Input matrix a[m, n]
+        real(sp), intent(in), target :: a(:, :)
+        !> Minimum workspace size for both operations.
+        integer(ilp), intent(out) :: lwork
+        !> Pivoting flag.
+        logical(lk), intent(in) :: pivoting
+        !> State return flag. Returns an error if the query failed.
+        type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_pivoting_qr_s_workspace
       pure module subroutine get_qr_d_workspace(a,lwork,err)
          !> Input matrix a[m,n]
          real(dp), intent(in), target :: a(:,:)
@@ -1515,6 +2403,17 @@ module stdlib_linalg
          !> State return flag. Returns an error if the query failed
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine get_qr_d_workspace
+
+      pure module subroutine get_pivoting_qr_d_workspace(a, lwork, pivoting, err)
+        !> Input matrix a[m, n]
+        real(dp), intent(in), target :: a(:, :)
+        !> Minimum workspace size for both operations.
+        integer(ilp), intent(out) :: lwork
+        !> Pivoting flag.
+        logical(lk), intent(in) :: pivoting
+        !> State return flag. Returns an error if the query failed.
+        type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_pivoting_qr_d_workspace
       pure module subroutine get_qr_c_workspace(a,lwork,err)
          !> Input matrix a[m,n]
          complex(sp), intent(in), target :: a(:,:)
@@ -1523,6 +2422,17 @@ module stdlib_linalg
          !> State return flag. Returns an error if the query failed
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine get_qr_c_workspace
+
+      pure module subroutine get_pivoting_qr_c_workspace(a, lwork, pivoting, err)
+        !> Input matrix a[m, n]
+        complex(sp), intent(in), target :: a(:, :)
+        !> Minimum workspace size for both operations.
+        integer(ilp), intent(out) :: lwork
+        !> Pivoting flag.
+        logical(lk), intent(in) :: pivoting
+        !> State return flag. Returns an error if the query failed.
+        type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_pivoting_qr_c_workspace
       pure module subroutine get_qr_z_workspace(a,lwork,err)
          !> Input matrix a[m,n]
          complex(dp), intent(in), target :: a(:,:)
@@ -1531,8 +2441,227 @@ module stdlib_linalg
          !> State return flag. Returns an error if the query failed
          type(linalg_state_type), optional, intent(out) :: err
       end subroutine get_qr_z_workspace
+
+      pure module subroutine get_pivoting_qr_z_workspace(a, lwork, pivoting, err)
+        !> Input matrix a[m, n]
+        complex(dp), intent(in), target :: a(:, :)
+        !> Minimum workspace size for both operations.
+        integer(ilp), intent(out) :: lwork
+        !> Pivoting flag.
+        logical(lk), intent(in) :: pivoting
+        !> State return flag. Returns an error if the query failed.
+        type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_pivoting_qr_z_workspace
   end interface qr_space
  
+  ! Schur decomposition of rank-2 array A
+  interface schur
+    !! version: experimental
+    !!
+    !! Computes the Schur decomposition of matrix \( A = Z T Z^H \).
+    !! ([Specification](../page/specs/stdlib_linalg.html#schur-compute-the-schur-decomposition-of-a-matrix))
+    !!
+    !!### Summary
+    !! Compute the Schur decomposition of a `real` or `complex` matrix: \( A = Z T Z^H \), where \( Z \) is
+    !! orthonormal/unitary and \( T \) is upper-triangular or quasi-upper-triangular. Matrix \( A \) has size `[m,m]`.
+    !!
+    !!### Description
+    !! 
+    !! This interface provides methods for computing the Schur decomposition of a matrix.
+    !! Supported data types include `real` and `complex`. If a pre-allocated workspace is provided, no internal 
+    !! memory allocations take place when using this interface.
+    !!
+    !! The output matrix \( T \) is upper-triangular for `complex` input matrices and quasi-upper-triangular
+    !! for `real` input matrices (with possible \( 2 \times 2 \) blocks on the diagonal).
+    !!
+    !!@note The solution is based on LAPACK's Schur decomposition routines (`*GEES`). 
+    !! 
+      module subroutine stdlib_linalg_s_schur(a, t, z, eigvals, overwrite_a, storage, err)
+         !> Input matrix a[m,m]
+         real(sp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         real(sp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         real(sp), optional, intent(out), contiguous, target :: z(:,:)
+         !> [optional] Output eigenvalues that appear on the diagonal of T
+         complex(sp), optional, intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a                 
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space         
+         real(sp), optional, intent(inout), target :: storage(:)
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_s_schur
+      
+      ! Schur decomposition subroutine: real eigenvalue interface
+      module subroutine stdlib_linalg_real_eig_s_schur(a,t,z,eigvals,overwrite_a,storage,err)
+         !> Input matrix a[m,m]
+         real(sp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         real(sp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         real(sp), optional, intent(out), contiguous, target :: z(:,:)
+         !> Output real eigenvalues that appear on the diagonal of T
+         real(sp), intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space
+         real(sp), optional, intent(inout), target :: storage(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a        
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err        
+      end subroutine stdlib_linalg_real_eig_s_schur 
+      module subroutine stdlib_linalg_d_schur(a, t, z, eigvals, overwrite_a, storage, err)
+         !> Input matrix a[m,m]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         real(dp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         real(dp), optional, intent(out), contiguous, target :: z(:,:)
+         !> [optional] Output eigenvalues that appear on the diagonal of T
+         complex(dp), optional, intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a                 
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space         
+         real(dp), optional, intent(inout), target :: storage(:)
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_d_schur
+      
+      ! Schur decomposition subroutine: real eigenvalue interface
+      module subroutine stdlib_linalg_real_eig_d_schur(a,t,z,eigvals,overwrite_a,storage,err)
+         !> Input matrix a[m,m]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         real(dp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         real(dp), optional, intent(out), contiguous, target :: z(:,:)
+         !> Output real eigenvalues that appear on the diagonal of T
+         real(dp), intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space
+         real(dp), optional, intent(inout), target :: storage(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a        
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err        
+      end subroutine stdlib_linalg_real_eig_d_schur 
+      module subroutine stdlib_linalg_c_schur(a, t, z, eigvals, overwrite_a, storage, err)
+         !> Input matrix a[m,m]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         complex(sp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         complex(sp), optional, intent(out), contiguous, target :: z(:,:)
+         !> [optional] Output eigenvalues that appear on the diagonal of T
+         complex(sp), optional, intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a                 
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space         
+         complex(sp), optional, intent(inout), target :: storage(:)
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_c_schur
+      
+      ! Schur decomposition subroutine: real eigenvalue interface
+      module subroutine stdlib_linalg_real_eig_c_schur(a,t,z,eigvals,overwrite_a,storage,err)
+         !> Input matrix a[m,m]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         complex(sp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         complex(sp), optional, intent(out), contiguous, target :: z(:,:)
+         !> Output real eigenvalues that appear on the diagonal of T
+         real(sp), intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space
+         complex(sp), optional, intent(inout), target :: storage(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a        
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err        
+      end subroutine stdlib_linalg_real_eig_c_schur 
+      module subroutine stdlib_linalg_z_schur(a, t, z, eigvals, overwrite_a, storage, err)
+         !> Input matrix a[m,m]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         complex(dp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         complex(dp), optional, intent(out), contiguous, target :: z(:,:)
+         !> [optional] Output eigenvalues that appear on the diagonal of T
+         complex(dp), optional, intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a                 
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space         
+         complex(dp), optional, intent(inout), target :: storage(:)
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine stdlib_linalg_z_schur
+      
+      ! Schur decomposition subroutine: real eigenvalue interface
+      module subroutine stdlib_linalg_real_eig_z_schur(a,t,z,eigvals,overwrite_a,storage,err)
+         !> Input matrix a[m,m]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Schur form of A: upper-triangular or quasi-upper-triangular matrix T
+         complex(dp), intent(out), contiguous, target :: t(:,:)
+         !> Unitary/orthonormal transformation matrix Z
+         complex(dp), optional, intent(out), contiguous, target :: z(:,:)
+         !> Output real eigenvalues that appear on the diagonal of T
+         real(dp), intent(out), contiguous, target :: eigvals(:)
+         !> [optional] Provide pre-allocated workspace, size to be checked with schur_space
+         complex(dp), optional, intent(inout), target :: storage(:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a        
+         !> [optional] State return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err        
+      end subroutine stdlib_linalg_real_eig_z_schur 
+  end interface schur
+
+  ! Return the working array space required by the Schur decomposition solver
+  interface schur_space
+    !! version: experimental
+    !!
+    !! Computes the working array space required by the Schur decomposition solver
+    !! ([Specification](../page/specs/stdlib_linalg.html#schur-space-compute-internal-working-space-requirements-for-the-schur-decomposition))
+    !!
+    !!### Description
+    !! 
+    !! This interface returns the size of the `real` or `complex` working storage required by the 
+    !! Schur decomposition solver. The working size only depends on the kind (`real` or `complex`) and size of
+    !! the matrix being decomposed. Storage size can be used to pre-allocate a working array in case several 
+    !! repeated Schur decompositions of same-size matrices are sought. If pre-allocated working arrays 
+    !! are provided, no internal allocations will take place during the decomposition.
+    !!     
+      module subroutine get_schur_s_workspace(a,lwork,err)
+         !> Input matrix a[m,m]
+         real(sp), intent(in), target :: a(:,:)
+         !> Minimum workspace size for the decomposition operation
+         integer(ilp), intent(out) :: lwork
+         !> State return flag. Returns an error if the query failed
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_schur_s_workspace
+      module subroutine get_schur_d_workspace(a,lwork,err)
+         !> Input matrix a[m,m]
+         real(dp), intent(in), target :: a(:,:)
+         !> Minimum workspace size for the decomposition operation
+         integer(ilp), intent(out) :: lwork
+         !> State return flag. Returns an error if the query failed
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_schur_d_workspace
+      module subroutine get_schur_c_workspace(a,lwork,err)
+         !> Input matrix a[m,m]
+         complex(sp), intent(in), target :: a(:,:)
+         !> Minimum workspace size for the decomposition operation
+         integer(ilp), intent(out) :: lwork
+         !> State return flag. Returns an error if the query failed
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_schur_c_workspace
+      module subroutine get_schur_z_workspace(a,lwork,err)
+         !> Input matrix a[m,m]
+         complex(dp), intent(in), target :: a(:,:)
+         !> Minimum workspace size for the decomposition operation
+         integer(ilp), intent(out) :: lwork
+         !> State return flag. Returns an error if the query failed
+         type(linalg_state_type), optional, intent(out) :: err
+      end subroutine get_schur_z_workspace
+  end interface schur_space
 
   interface det
     !! version: experimental 
@@ -1548,8 +2677,7 @@ module stdlib_linalg
     !! This interface provides methods for computing the determinant of a matrix.
     !! Supported data types include `real` and `complex`.
     !! 
-    !!@note The provided functions are intended for square matrices only.          
-    !!@note BLAS/LAPACK backends do not currently support extended precision (``xdp``).
+    !!@note The provided functions are intended for square matrices only.
     !! 
     !!### Example
     !!
@@ -1594,7 +2722,6 @@ module stdlib_linalg
     !! Supported data types include real and complex.
     !!
     !!@note The provided functions are intended for square matrices.
-    !!@note BLAS/LAPACK backends do not currently support extended precision (``xdp``).
     !!
     !!### Example
     !!
@@ -1882,6 +3009,203 @@ module stdlib_linalg
   end interface operator(.inv.)
 
 
+  ! Moore-Penrose Pseudo-Inverse: Function interface
+  interface pinv
+    !! version: experimental 
+    !!
+    !! Pseudo-inverse of a matrix
+    !! ([Specification](../page/specs/stdlib_linalg.html#pinv-moore-penrose-pseudo-inverse-of-a-matrix))
+    !!
+    !!### Summary
+    !! This interface provides methods for computing the Moore-Penrose pseudo-inverse of a matrix.
+    !! The pseudo-inverse \( A^{+} \) is a generalization of the matrix inverse, computed for square, singular, 
+    !! or rectangular matrices. It is defined such that it satisfies the conditions:
+    !! - \( A \cdot A^{+} \cdot A = A \)
+    !! - \( A^{+} \cdot A \cdot A^{+} = A^{+} \)
+    !! - \( (A \cdot A^{+})^T = A \cdot A^{+} \)
+    !! - \( (A^{+} \cdot A)^T = A^{+} \cdot A \)
+    !!
+    !!### Description
+    !!     
+    !! This function interface provides methods that return the Moore-Penrose pseudo-inverse of a matrix.    
+    !! Supported data types include `real` and `complex`. 
+    !! The pseudo-inverse \( A^{+} \) is returned as a function result. The computation is based on the 
+    !! singular value decomposition (SVD). An optional relative tolerance `rtol` is provided to control the 
+    !! inclusion of singular values during inversion. Singular values below \( \text{rtol} \cdot \sigma_{\max} \) 
+    !! are treated as zero, where \( \sigma_{\max} \) is the largest singular value. If `rtol` is not provided, 
+    !! a default threshold is applied.
+    !! 
+    !! Exceptions are raised in case of computational errors or invalid input, and trigger an `error stop` 
+    !! if the state flag `err` is not provided. 
+    !!
+    !!@note The provided functions are intended for both rectangular and square matrices.
+    !!       
+    module function stdlib_linalg_pseudoinverse_s(a,rtol,err) result(pinva)
+        !> Input matrix a[m,n]
+        real(sp), intent(in), target :: a(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(sp), optional, intent(in) :: rtol         
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Output matrix pseudo-inverse [n,m]
+        real(sp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))         
+     end function stdlib_linalg_pseudoinverse_s
+    module function stdlib_linalg_pseudoinverse_d(a,rtol,err) result(pinva)
+        !> Input matrix a[m,n]
+        real(dp), intent(in), target :: a(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(dp), optional, intent(in) :: rtol         
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Output matrix pseudo-inverse [n,m]
+        real(dp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))         
+     end function stdlib_linalg_pseudoinverse_d
+    module function stdlib_linalg_pseudoinverse_c(a,rtol,err) result(pinva)
+        !> Input matrix a[m,n]
+        complex(sp), intent(in), target :: a(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(sp), optional, intent(in) :: rtol         
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Output matrix pseudo-inverse [n,m]
+        complex(sp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))         
+     end function stdlib_linalg_pseudoinverse_c
+    module function stdlib_linalg_pseudoinverse_z(a,rtol,err) result(pinva)
+        !> Input matrix a[m,n]
+        complex(dp), intent(in), target :: a(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(dp), optional, intent(in) :: rtol         
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+        !> Output matrix pseudo-inverse [n,m]
+        complex(dp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))         
+     end function stdlib_linalg_pseudoinverse_z
+  end interface pinv
+
+  ! Moore-Penrose Pseudo-Inverse: Subroutine interface 
+  interface pseudoinvert
+    !! version: experimental 
+    !!
+    !! Computation of the Moore-Penrose pseudo-inverse
+    !! ([Specification](../page/specs/stdlib_linalg.html#pseudoinvert-moore-penrose-pseudo-inverse-of-a-matrix))
+    !!
+    !!### Summary
+    !! This interface provides methods for computing the Moore-Penrose pseudo-inverse of a rectangular 
+    !! or square `real` or `complex` matrix.
+    !! The pseudo-inverse \( A^{+} \) generalizes the matrix inverse and satisfies the properties:
+    !! - \( A \cdot A^{+} \cdot A = A \)
+    !! - \( A^{+} \cdot A \cdot A^{+} = A^{+} \)
+    !! - \( (A \cdot A^{+})^T = A \cdot A^{+} \)
+    !! - \( (A^{+} \cdot A)^T = A^{+} \cdot A \)
+    !!
+    !!### Description
+    !!     
+    !! This subroutine interface provides a way to compute the Moore-Penrose pseudo-inverse of a matrix.    
+    !! Supported data types include `real` and `complex`. 
+    !! Users must provide two matrices: the input matrix `a` [m,n] and the output pseudo-inverse `pinva` [n,m]. 
+    !! The input matrix `a` is used to compute the pseudo-inverse and is not modified. The computed 
+    !! pseudo-inverse is stored in `pinva`. The computation is based on the singular value decomposition (SVD).
+    !! 
+    !! An optional relative tolerance `rtol` is used to control the inclusion of singular values in the 
+    !! computation. Singular values below \( \text{rtol} \cdot \sigma_{\max} \) are treated as zero, 
+    !! where \( \sigma_{\max} \) is the largest singular value. If `rtol` is not provided, a default 
+    !! threshold is applied. 
+    !! 
+    !! Exceptions are raised in case of computational errors or invalid input, and trigger an `error stop` 
+    !! if the state flag `err` is not provided.
+    !!
+    !!@note The provided subroutines are intended for both rectangular and square matrices.
+    !!       
+    module subroutine stdlib_linalg_pseudoinvert_s(a,pinva,rtol,err)
+        !> Input matrix a[m,n]
+        real(sp), intent(inout) :: a(:,:)
+        !> Output pseudo-inverse matrix [n,m]
+        real(sp), intent(out) :: pinva(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(sp), optional, intent(in) :: rtol
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_pseudoinvert_s
+    module subroutine stdlib_linalg_pseudoinvert_d(a,pinva,rtol,err)
+        !> Input matrix a[m,n]
+        real(dp), intent(inout) :: a(:,:)
+        !> Output pseudo-inverse matrix [n,m]
+        real(dp), intent(out) :: pinva(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(dp), optional, intent(in) :: rtol
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_pseudoinvert_d
+    module subroutine stdlib_linalg_pseudoinvert_c(a,pinva,rtol,err)
+        !> Input matrix a[m,n]
+        complex(sp), intent(inout) :: a(:,:)
+        !> Output pseudo-inverse matrix [n,m]
+        complex(sp), intent(out) :: pinva(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(sp), optional, intent(in) :: rtol
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_pseudoinvert_c
+    module subroutine stdlib_linalg_pseudoinvert_z(a,pinva,rtol,err)
+        !> Input matrix a[m,n]
+        complex(dp), intent(inout) :: a(:,:)
+        !> Output pseudo-inverse matrix [n,m]
+        complex(dp), intent(out) :: pinva(:,:)
+        !> [optional] Relative tolerance for singular value cutoff
+        real(dp), optional, intent(in) :: rtol
+        !> [optional] State return flag. On error if not requested, the code will stop
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_pseudoinvert_z
+  end interface pseudoinvert
+
+  ! Moore-Penrose Pseudo-Inverse: Operator interface
+  interface operator(.pinv.)
+    !! version: experimental 
+    !!
+    !! Pseudo-inverse operator of a matrix
+    !! ([Specification](../page/specs/stdlib_linalg.html#pinv-moore-penrose-pseudo-inverse-operator))
+    !!
+    !!### Summary
+    !! Operator interface for computing the Moore-Penrose pseudo-inverse of a `real` or `complex` matrix.
+    !!
+    !!### Description
+    !! 
+    !! This operator interface provides a convenient way to compute the Moore-Penrose pseudo-inverse 
+    !! of a matrix. Supported data types include `real` and `complex`. The pseudo-inverse \( A^{+} \) 
+    !! is computed using singular value decomposition (SVD), with singular values below an internal 
+    !! threshold treated as zero.
+    !! 
+    !! For computational errors or invalid input, the function may return a matrix filled with NaNs.
+    !!
+    !!@note The provided functions are intended for both rectangular and square matrices.
+    !!
+    module function stdlib_linalg_pinv_s_operator(a) result(pinva)
+         !> Input matrix a[m,n]
+         real(sp), intent(in), target :: a(:,:)
+         !> Result pseudo-inverse matrix
+         real(sp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))
+    end function stdlib_linalg_pinv_s_operator
+    module function stdlib_linalg_pinv_d_operator(a) result(pinva)
+         !> Input matrix a[m,n]
+         real(dp), intent(in), target :: a(:,:)
+         !> Result pseudo-inverse matrix
+         real(dp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))
+    end function stdlib_linalg_pinv_d_operator
+    module function stdlib_linalg_pinv_c_operator(a) result(pinva)
+         !> Input matrix a[m,n]
+         complex(sp), intent(in), target :: a(:,:)
+         !> Result pseudo-inverse matrix
+         complex(sp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))
+    end function stdlib_linalg_pinv_c_operator
+    module function stdlib_linalg_pinv_z_operator(a) result(pinva)
+         !> Input matrix a[m,n]
+         complex(dp), intent(in), target :: a(:,:)
+         !> Result pseudo-inverse matrix
+         complex(dp) :: pinva(size(a,2,kind=ilp),size(a,1,kind=ilp))
+    end function stdlib_linalg_pinv_z_operator
+  end interface operator(.pinv.)
+
+
   ! Eigendecomposition of a square matrix: eigenvalues, and optionally eigenvectors
   interface eig    
      !! version: experimental 
@@ -1901,9 +3225,9 @@ module stdlib_linalg
      !! Preallocated space for both eigenvalues `lambda` and the eigenvector matrices must be user-provided.      
      !! 
      !!@note The solution is based on LAPACK's general eigenproblem solvers `*GEEV`.
-     !!@note BLAS/LAPACK backends do not currently support extended precision (``xdp``).
      !!       
-    module subroutine stdlib_linalg_eig_s(a,lambda,right,left,overwrite_a,err)
+    module subroutine stdlib_linalg_eig_standard_s(a,lambda,right,left, &
+                                                      overwrite_a,err)
      !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
      !! and optionally right or left eigenvectors.        
          !> Input matrix A[m,n]
@@ -1918,56 +3242,10 @@ module stdlib_linalg
          logical(lk), optional, intent(in) :: overwrite_a
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
-    end subroutine stdlib_linalg_eig_s
-    module subroutine stdlib_linalg_eig_d(a,lambda,right,left,overwrite_a,err)
-     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
-     !! and optionally right or left eigenvectors.        
-         !> Input matrix A[m,n]
-         real(dp), intent(inout), target :: a(:,:)
-         !> Array of eigenvalues
-         complex(dp), intent(out) :: lambda(:)
-         !> The columns of RIGHT contain the right eigenvectors of A
-         complex(dp), optional, intent(out), target :: right(:,:)
-         !> The columns of LEFT contain the left eigenvectors of A
-         complex(dp), optional, intent(out), target :: left(:,:)
-         !> [optional] Can A data be overwritten and destroyed?
-         logical(lk), optional, intent(in) :: overwrite_a
-         !> [optional] state return flag. On error if not requested, the code will stop
-         type(linalg_state_type), optional, intent(out) :: err
-    end subroutine stdlib_linalg_eig_d
-    module subroutine stdlib_linalg_eig_c(a,lambda,right,left,overwrite_a,err)
-     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
-     !! and optionally right or left eigenvectors.        
-         !> Input matrix A[m,n]
-         complex(sp), intent(inout), target :: a(:,:)
-         !> Array of eigenvalues
-         complex(sp), intent(out) :: lambda(:)
-         !> The columns of RIGHT contain the right eigenvectors of A
-         complex(sp), optional, intent(out), target :: right(:,:)
-         !> The columns of LEFT contain the left eigenvectors of A
-         complex(sp), optional, intent(out), target :: left(:,:)
-         !> [optional] Can A data be overwritten and destroyed?
-         logical(lk), optional, intent(in) :: overwrite_a
-         !> [optional] state return flag. On error if not requested, the code will stop
-         type(linalg_state_type), optional, intent(out) :: err
-    end subroutine stdlib_linalg_eig_c
-    module subroutine stdlib_linalg_eig_z(a,lambda,right,left,overwrite_a,err)
-     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
-     !! and optionally right or left eigenvectors.        
-         !> Input matrix A[m,n]
-         complex(dp), intent(inout), target :: a(:,:)
-         !> Array of eigenvalues
-         complex(dp), intent(out) :: lambda(:)
-         !> The columns of RIGHT contain the right eigenvectors of A
-         complex(dp), optional, intent(out), target :: right(:,:)
-         !> The columns of LEFT contain the left eigenvectors of A
-         complex(dp), optional, intent(out), target :: left(:,:)
-         !> [optional] Can A data be overwritten and destroyed?
-         logical(lk), optional, intent(in) :: overwrite_a
-         !> [optional] state return flag. On error if not requested, the code will stop
-         type(linalg_state_type), optional, intent(out) :: err
-    end subroutine stdlib_linalg_eig_z
-    module subroutine stdlib_linalg_real_eig_s(a,lambda,right,left,overwrite_a,err)
+    end subroutine stdlib_linalg_eig_standard_s
+
+    module subroutine stdlib_linalg_real_eig_standard_s(a,lambda,right,left, &
+                                                           overwrite_a,err)
      !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
      !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
      !! non-trivial imaginary parts.
@@ -1983,8 +3261,71 @@ module stdlib_linalg
          logical(lk), optional, intent(in) :: overwrite_a
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
-    end subroutine stdlib_linalg_real_eig_s
-    module subroutine stdlib_linalg_real_eig_d(a,lambda,right,left,overwrite_a,err)
+    end subroutine stdlib_linalg_real_eig_standard_s
+    module subroutine stdlib_linalg_eig_generalized_s(a,b,lambda,right,left, &
+                                                      overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         real(sp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         real(sp), intent(inout), target :: b(:,:)
+         !> Array of eigenvalues
+         complex(sp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(sp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(sp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_generalized_s
+
+    module subroutine stdlib_linalg_real_eig_generalized_s(a,b,lambda,right,left, &
+                                                           overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
+     !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
+     !! non-trivial imaginary parts.
+         !> Input matrix A[m,n]
+         real(sp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         real(sp), intent(inout), target :: b(:,:)  
+         !> Array of real eigenvalues
+         real(sp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(sp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(sp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_real_eig_generalized_s
+    module subroutine stdlib_linalg_eig_standard_d(a,lambda,right,left, &
+                                                      overwrite_a,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Array of eigenvalues
+         complex(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_standard_d
+
+    module subroutine stdlib_linalg_real_eig_standard_d(a,lambda,right,left, &
+                                                           overwrite_a,err)
      !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
      !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
      !! non-trivial imaginary parts.
@@ -2000,7 +3341,211 @@ module stdlib_linalg
          logical(lk), optional, intent(in) :: overwrite_a
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), optional, intent(out) :: err
-    end subroutine stdlib_linalg_real_eig_d
+    end subroutine stdlib_linalg_real_eig_standard_d
+    module subroutine stdlib_linalg_eig_generalized_d(a,b,lambda,right,left, &
+                                                      overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         real(dp), intent(inout), target :: b(:,:)
+         !> Array of eigenvalues
+         complex(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_generalized_d
+
+    module subroutine stdlib_linalg_real_eig_generalized_d(a,b,lambda,right,left, &
+                                                           overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
+     !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
+     !! non-trivial imaginary parts.
+         !> Input matrix A[m,n]
+         real(dp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         real(dp), intent(inout), target :: b(:,:)  
+         !> Array of real eigenvalues
+         real(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_real_eig_generalized_d
+    module subroutine stdlib_linalg_eig_standard_c(a,lambda,right,left, &
+                                                      overwrite_a,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Array of eigenvalues
+         complex(sp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(sp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(sp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_standard_c
+
+    module subroutine stdlib_linalg_real_eig_standard_c(a,lambda,right,left, &
+                                                           overwrite_a,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
+     !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
+     !! non-trivial imaginary parts.
+         !> Input matrix A[m,n]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Array of real eigenvalues
+         real(sp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(sp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(sp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_real_eig_standard_c
+    module subroutine stdlib_linalg_eig_generalized_c(a,b,lambda,right,left, &
+                                                      overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         complex(sp), intent(inout), target :: b(:,:)
+         !> Array of eigenvalues
+         complex(sp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(sp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(sp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_generalized_c
+
+    module subroutine stdlib_linalg_real_eig_generalized_c(a,b,lambda,right,left, &
+                                                           overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
+     !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
+     !! non-trivial imaginary parts.
+         !> Input matrix A[m,n]
+         complex(sp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         complex(sp), intent(inout), target :: b(:,:)  
+         !> Array of real eigenvalues
+         real(sp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(sp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(sp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_real_eig_generalized_c
+    module subroutine stdlib_linalg_eig_standard_z(a,lambda,right,left, &
+                                                      overwrite_a,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Array of eigenvalues
+         complex(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_standard_z
+
+    module subroutine stdlib_linalg_real_eig_standard_z(a,lambda,right,left, &
+                                                           overwrite_a,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
+     !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
+     !! non-trivial imaginary parts.
+         !> Input matrix A[m,n]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Array of real eigenvalues
+         real(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_real_eig_standard_z
+    module subroutine stdlib_linalg_eig_generalized_z(a,b,lambda,right,left, &
+                                                      overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of eigenvalues, 
+     !! and optionally right or left eigenvectors.        
+         !> Input matrix A[m,n]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         complex(dp), intent(inout), target :: b(:,:)
+         !> Array of eigenvalues
+         complex(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_eig_generalized_z
+
+    module subroutine stdlib_linalg_real_eig_generalized_z(a,b,lambda,right,left, &
+                                                           overwrite_a,overwrite_b,err)
+     !! Eigendecomposition of matrix A returning an array `lambda` of real eigenvalues, 
+     !! and optionally right or left eigenvectors. Returns an error if the eigenvalues had
+     !! non-trivial imaginary parts.
+         !> Input matrix A[m,n]
+         complex(dp), intent(inout), target :: a(:,:)
+         !> Generalized problem matrix B[n,n]
+         complex(dp), intent(inout), target :: b(:,:)  
+         !> Array of real eigenvalues
+         real(dp), intent(out) :: lambda(:)
+         !> The columns of RIGHT contain the right eigenvectors of A
+         complex(dp), optional, intent(out), target :: right(:,:)
+         !> The columns of LEFT contain the left eigenvectors of A
+         complex(dp), optional, intent(out), target :: left(:,:)
+         !> [optional] Can A data be overwritten and destroyed?
+         logical(lk), optional, intent(in) :: overwrite_a
+         !> [optional] Can B data be overwritten and destroyed? (default: no)
+         logical(lk), optional, intent(in) :: overwrite_b
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_real_eig_generalized_z
   end interface eig
 
   ! Eigenvalues of a square matrix
@@ -2021,76 +3566,159 @@ module stdlib_linalg
      !! as an optional `type(linalg_state_type)` output flag. 
      !! 
      !!@note The solution is based on LAPACK's general eigenproblem solvers `*GEEV`.
-     !!@note BLAS/LAPACK backends do not currently support extended precision (``xdp``).
      !!       
-    module function stdlib_linalg_eigvals_s(a,err) result(lambda)
+    module function stdlib_linalg_eigvals_standard_s(a,err) result(lambda)
      !! Return an array of eigenvalues of matrix A.
          !> Input matrix A[m,n]
-         real(sp), intent(in), target :: a(:,:)
+         real(sp), intent(in), dimension(:,:), target :: a 
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), intent(out) :: err
          !> Array of singular values
          complex(sp), allocatable :: lambda(:)        
-    end function stdlib_linalg_eigvals_s
+    end function stdlib_linalg_eigvals_standard_s
     
-    module function stdlib_linalg_eigvals_noerr_s(a) result(lambda)
+    module function stdlib_linalg_eigvals_noerr_standard_s(a) result(lambda)
      !! Return an array of eigenvalues of matrix A.
          !> Input matrix A[m,n]
-         real(sp), intent(in), target :: a(:,:)
+         real(sp), intent(in), dimension(:,:), target :: a 
          !> Array of singular values
          complex(sp), allocatable :: lambda(:)
-    end function stdlib_linalg_eigvals_noerr_s
-    module function stdlib_linalg_eigvals_d(a,err) result(lambda)
+    end function stdlib_linalg_eigvals_noerr_standard_s
+    module function stdlib_linalg_eigvals_generalized_s(a,b,err) result(lambda)
      !! Return an array of eigenvalues of matrix A.
          !> Input matrix A[m,n]
-         real(dp), intent(in), target :: a(:,:)
-         !> [optional] state return flag. On error if not requested, the code will stop
-         type(linalg_state_type), intent(out) :: err
-         !> Array of singular values
-         complex(dp), allocatable :: lambda(:)        
-    end function stdlib_linalg_eigvals_d
-    
-    module function stdlib_linalg_eigvals_noerr_d(a) result(lambda)
-     !! Return an array of eigenvalues of matrix A.
-         !> Input matrix A[m,n]
-         real(dp), intent(in), target :: a(:,:)
-         !> Array of singular values
-         complex(dp), allocatable :: lambda(:)
-    end function stdlib_linalg_eigvals_noerr_d
-    module function stdlib_linalg_eigvals_c(a,err) result(lambda)
-     !! Return an array of eigenvalues of matrix A.
-         !> Input matrix A[m,n]
-         complex(sp), intent(in), target :: a(:,:)
+         real(sp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         real(sp), intent(inout), dimension(:,:), target :: b         
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), intent(out) :: err
          !> Array of singular values
          complex(sp), allocatable :: lambda(:)        
-    end function stdlib_linalg_eigvals_c
+    end function stdlib_linalg_eigvals_generalized_s
     
-    module function stdlib_linalg_eigvals_noerr_c(a) result(lambda)
+    module function stdlib_linalg_eigvals_noerr_generalized_s(a,b) result(lambda)
      !! Return an array of eigenvalues of matrix A.
          !> Input matrix A[m,n]
-         complex(sp), intent(in), target :: a(:,:)
+         real(sp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         real(sp), intent(inout), dimension(:,:), target :: b         
          !> Array of singular values
          complex(sp), allocatable :: lambda(:)
-    end function stdlib_linalg_eigvals_noerr_c
-    module function stdlib_linalg_eigvals_z(a,err) result(lambda)
+    end function stdlib_linalg_eigvals_noerr_generalized_s
+    module function stdlib_linalg_eigvals_standard_d(a,err) result(lambda)
      !! Return an array of eigenvalues of matrix A.
          !> Input matrix A[m,n]
-         complex(dp), intent(in), target :: a(:,:)
+         real(dp), intent(in), dimension(:,:), target :: a 
          !> [optional] state return flag. On error if not requested, the code will stop
          type(linalg_state_type), intent(out) :: err
          !> Array of singular values
          complex(dp), allocatable :: lambda(:)        
-    end function stdlib_linalg_eigvals_z
+    end function stdlib_linalg_eigvals_standard_d
     
-    module function stdlib_linalg_eigvals_noerr_z(a) result(lambda)
+    module function stdlib_linalg_eigvals_noerr_standard_d(a) result(lambda)
      !! Return an array of eigenvalues of matrix A.
          !> Input matrix A[m,n]
-         complex(dp), intent(in), target :: a(:,:)
+         real(dp), intent(in), dimension(:,:), target :: a 
          !> Array of singular values
          complex(dp), allocatable :: lambda(:)
-    end function stdlib_linalg_eigvals_noerr_z
+    end function stdlib_linalg_eigvals_noerr_standard_d
+    module function stdlib_linalg_eigvals_generalized_d(a,b,err) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         real(dp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         real(dp), intent(inout), dimension(:,:), target :: b         
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), intent(out) :: err
+         !> Array of singular values
+         complex(dp), allocatable :: lambda(:)        
+    end function stdlib_linalg_eigvals_generalized_d
+    
+    module function stdlib_linalg_eigvals_noerr_generalized_d(a,b) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         real(dp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         real(dp), intent(inout), dimension(:,:), target :: b         
+         !> Array of singular values
+         complex(dp), allocatable :: lambda(:)
+    end function stdlib_linalg_eigvals_noerr_generalized_d
+    module function stdlib_linalg_eigvals_standard_c(a,err) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(sp), intent(in), dimension(:,:), target :: a 
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), intent(out) :: err
+         !> Array of singular values
+         complex(sp), allocatable :: lambda(:)        
+    end function stdlib_linalg_eigvals_standard_c
+    
+    module function stdlib_linalg_eigvals_noerr_standard_c(a) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(sp), intent(in), dimension(:,:), target :: a 
+         !> Array of singular values
+         complex(sp), allocatable :: lambda(:)
+    end function stdlib_linalg_eigvals_noerr_standard_c
+    module function stdlib_linalg_eigvals_generalized_c(a,b,err) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(sp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         complex(sp), intent(inout), dimension(:,:), target :: b         
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), intent(out) :: err
+         !> Array of singular values
+         complex(sp), allocatable :: lambda(:)        
+    end function stdlib_linalg_eigvals_generalized_c
+    
+    module function stdlib_linalg_eigvals_noerr_generalized_c(a,b) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(sp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         complex(sp), intent(inout), dimension(:,:), target :: b         
+         !> Array of singular values
+         complex(sp), allocatable :: lambda(:)
+    end function stdlib_linalg_eigvals_noerr_generalized_c
+    module function stdlib_linalg_eigvals_standard_z(a,err) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(dp), intent(in), dimension(:,:), target :: a 
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), intent(out) :: err
+         !> Array of singular values
+         complex(dp), allocatable :: lambda(:)        
+    end function stdlib_linalg_eigvals_standard_z
+    
+    module function stdlib_linalg_eigvals_noerr_standard_z(a) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(dp), intent(in), dimension(:,:), target :: a 
+         !> Array of singular values
+         complex(dp), allocatable :: lambda(:)
+    end function stdlib_linalg_eigvals_noerr_standard_z
+    module function stdlib_linalg_eigvals_generalized_z(a,b,err) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(dp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         complex(dp), intent(inout), dimension(:,:), target :: b         
+         !> [optional] state return flag. On error if not requested, the code will stop
+         type(linalg_state_type), intent(out) :: err
+         !> Array of singular values
+         complex(dp), allocatable :: lambda(:)        
+    end function stdlib_linalg_eigvals_generalized_z
+    
+    module function stdlib_linalg_eigvals_noerr_generalized_z(a,b) result(lambda)
+     !! Return an array of eigenvalues of matrix A.
+         !> Input matrix A[m,n]
+         complex(dp), intent(in), dimension(:,:), target :: a 
+         !> Generalized problem matrix B[n,n]
+         complex(dp), intent(inout), dimension(:,:), target :: b         
+         !> Array of singular values
+         complex(dp), allocatable :: lambda(:)
+    end function stdlib_linalg_eigvals_noerr_generalized_z
   end interface eigvals
      
   ! Eigendecomposition of a real symmetric or complex hermitian matrix
@@ -2115,7 +3743,6 @@ module stdlib_linalg
      !! Preallocated space for both eigenvalues `lambda` and the eigenvector matrix must be user-provided.      
      !! 
      !!@note The solution is based on LAPACK's eigenproblem solvers `*SYEV`/`*HEEV`.
-     !!@note BLAS/LAPACK backends do not currently support extended precision (``xdp``).
      !!      
     module subroutine stdlib_linalg_eigh_s(a,lambda,vectors,upper_a,overwrite_a,err)
      !! Eigendecomposition of a real symmetric or complex Hermitian matrix A returning an array `lambda` 
@@ -2204,7 +3831,6 @@ module stdlib_linalg
      !! as an optional `type(linalg_state_type)` output flag. 
      !! 
      !!@note The solution is based on LAPACK's eigenproblem solvers `*SYEV`/`*HEEV`.
-     !!@note BLAS/LAPACK backends do not currently support extended precision (``xdp``).
      !!         
     module function stdlib_linalg_eigvalsh_s(a,upper_a,err) result(lambda)
      !! Return an array of eigenvalues of real symmetric / complex hermitian A
@@ -2588,6 +4214,2403 @@ module stdlib_linalg
       end function stdlib_linalg_svdvals_z
   end interface svdvals  
 
+
+  ! Vector norms: function interface
+  interface norm
+     !! version: experimental 
+     !!
+     !! Computes the vector norm of a generic-rank array \( A \). 
+     !! ([Specification](../page/specs/stdlib_linalg.html#norm-computes-the-vector-norm-of-a-generic-rank-array))
+     !! 
+     !!### Summary 
+     !! Return one of several scalar norm metrics of a `real` or `complex` input array \( A \), 
+     !! that can have any rank. For generic rank-n arrays, the scalar norm over the whole 
+     !! array is returned by default. If `n>=2` and the optional input dimension `dim` is specified, 
+     !! a rank `n-1` array is returned with dimension `dim` collapsed, containing all 1D array norms 
+     !! evaluated along dimension `dim` only.
+     !! 
+     !!
+     !!### Description
+     !! 
+     !! This interface provides methods for computing the vector norm(s) of an array.  
+     !! Supported data types include `real` and `complex`. 
+     !! Input arrays may have generic rank from 1 to 4.
+     !!
+     !! Norm type input is mandatory, and it is provided via the `order` argument. 
+     !! This can be provided as either an `integer` value or a `character` string. 
+     !! Allowed metrics are: 
+     !! - 1-norm \( \sum_i{ \left|a_i\right| } \): `order` = 1 or '1'    
+     !! - Euclidean norm \( \sqrt{\sum_i{ a_i^2 }} \): `order` = 2 or '2'
+     !! - p-norm \( \left( \sum_i{ \left|a_i\right|^p }\right) ^{1/p} \): `integer` `order`, order>=3
+     !! - Infinity norm \( \max_i{ \left|a_i\right| } \): order = huge(0) or 'inf'
+     !! - Minus-infinity norm \( \min_i{ \left|a_i\right| } \): order = -huge(0) or '-inf'
+     !! 
+     !!### Example
+     !!
+     !!```fortran
+     !!
+     !!    real(sp) :: a(3,3), na, rown(3)
+     !!    a = reshape([1, 2, 3, 4, 5, 6, 7, 8, 9], [3, 3])
+     !!
+     !!    ! L2 norm: whole matrix
+     !!    na = norm(a, 2)
+     !!   
+     !!    ! Infinity norm of each row
+     !!    rown = norm(a, 'inf', dim=2)
+     !!     
+     !!```     
+     !!
+     !> Scalar norms: real(sp)
+     pure module function stdlib_linalg_norm_1D_order_char_s(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_char_s
+     module function stdlib_linalg_norm_1D_order_err_char_s(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_char_s
+     pure module function stdlib_linalg_norm_2D_order_char_s(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_char_s
+     module function stdlib_linalg_norm_2D_order_err_char_s(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_char_s
+     pure module function stdlib_linalg_norm_3D_order_char_s(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_char_s
+     module function stdlib_linalg_norm_3D_order_err_char_s(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_char_s
+     pure module function stdlib_linalg_norm_4D_order_char_s(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_char_s
+     module function stdlib_linalg_norm_4D_order_err_char_s(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_char_s
+     !> Array norms: real(sp)
+     pure module function stdlib_linalg_norm_2D_to_1D_char_s(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_char_s
+     module function stdlib_linalg_norm_2D_to_1D_err_char_s(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_char_s
+     pure module function stdlib_linalg_norm_3D_to_2D_char_s(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_char_s
+     module function stdlib_linalg_norm_3D_to_2D_err_char_s(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_char_s
+     pure module function stdlib_linalg_norm_4D_to_3D_char_s(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_char_s
+     module function stdlib_linalg_norm_4D_to_3D_err_char_s(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_char_s
+     !> Scalar norms: real(sp)
+     pure module function stdlib_linalg_norm_1D_order_int_s(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_int_s
+     module function stdlib_linalg_norm_1D_order_err_int_s(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_int_s
+     pure module function stdlib_linalg_norm_2D_order_int_s(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_int_s
+     module function stdlib_linalg_norm_2D_order_err_int_s(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_int_s
+     pure module function stdlib_linalg_norm_3D_order_int_s(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_int_s
+     module function stdlib_linalg_norm_3D_order_err_int_s(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_int_s
+     pure module function stdlib_linalg_norm_4D_order_int_s(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_int_s
+     module function stdlib_linalg_norm_4D_order_err_int_s(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_int_s
+     !> Array norms: real(sp)
+     pure module function stdlib_linalg_norm_2D_to_1D_int_s(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_int_s
+     module function stdlib_linalg_norm_2D_to_1D_err_int_s(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_int_s
+     pure module function stdlib_linalg_norm_3D_to_2D_int_s(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_int_s
+     module function stdlib_linalg_norm_3D_to_2D_err_int_s(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_int_s
+     pure module function stdlib_linalg_norm_4D_to_3D_int_s(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_int_s
+     module function stdlib_linalg_norm_4D_to_3D_err_int_s(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_int_s
+     !> Scalar norms: real(dp)
+     pure module function stdlib_linalg_norm_1D_order_char_d(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_char_d
+     module function stdlib_linalg_norm_1D_order_err_char_d(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_char_d
+     pure module function stdlib_linalg_norm_2D_order_char_d(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_char_d
+     module function stdlib_linalg_norm_2D_order_err_char_d(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_char_d
+     pure module function stdlib_linalg_norm_3D_order_char_d(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_char_d
+     module function stdlib_linalg_norm_3D_order_err_char_d(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_char_d
+     pure module function stdlib_linalg_norm_4D_order_char_d(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_char_d
+     module function stdlib_linalg_norm_4D_order_err_char_d(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_char_d
+     !> Array norms: real(dp)
+     pure module function stdlib_linalg_norm_2D_to_1D_char_d(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_char_d
+     module function stdlib_linalg_norm_2D_to_1D_err_char_d(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_char_d
+     pure module function stdlib_linalg_norm_3D_to_2D_char_d(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_char_d
+     module function stdlib_linalg_norm_3D_to_2D_err_char_d(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_char_d
+     pure module function stdlib_linalg_norm_4D_to_3D_char_d(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_char_d
+     module function stdlib_linalg_norm_4D_to_3D_err_char_d(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_char_d
+     !> Scalar norms: real(dp)
+     pure module function stdlib_linalg_norm_1D_order_int_d(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_int_d
+     module function stdlib_linalg_norm_1D_order_err_int_d(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        real(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_int_d
+     pure module function stdlib_linalg_norm_2D_order_int_d(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_int_d
+     module function stdlib_linalg_norm_2D_order_err_int_d(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        real(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_int_d
+     pure module function stdlib_linalg_norm_3D_order_int_d(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_int_d
+     module function stdlib_linalg_norm_3D_order_err_int_d(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        real(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_int_d
+     pure module function stdlib_linalg_norm_4D_order_int_d(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_int_d
+     module function stdlib_linalg_norm_4D_order_err_int_d(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        real(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_int_d
+     !> Array norms: real(dp)
+     pure module function stdlib_linalg_norm_2D_to_1D_int_d(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_int_d
+     module function stdlib_linalg_norm_2D_to_1D_err_int_d(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_int_d
+     pure module function stdlib_linalg_norm_3D_to_2D_int_d(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_int_d
+     module function stdlib_linalg_norm_3D_to_2D_err_int_d(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_int_d
+     pure module function stdlib_linalg_norm_4D_to_3D_int_d(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_int_d
+     module function stdlib_linalg_norm_4D_to_3D_err_int_d(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        real(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_int_d
+     !> Scalar norms: complex(sp)
+     pure module function stdlib_linalg_norm_1D_order_char_c(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_char_c
+     module function stdlib_linalg_norm_1D_order_err_char_c(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_char_c
+     pure module function stdlib_linalg_norm_2D_order_char_c(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_char_c
+     module function stdlib_linalg_norm_2D_order_err_char_c(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_char_c
+     pure module function stdlib_linalg_norm_3D_order_char_c(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_char_c
+     module function stdlib_linalg_norm_3D_order_err_char_c(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_char_c
+     pure module function stdlib_linalg_norm_4D_order_char_c(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_char_c
+     module function stdlib_linalg_norm_4D_order_err_char_c(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_char_c
+     !> Array norms: complex(sp)
+     pure module function stdlib_linalg_norm_2D_to_1D_char_c(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_char_c
+     module function stdlib_linalg_norm_2D_to_1D_err_char_c(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_char_c
+     pure module function stdlib_linalg_norm_3D_to_2D_char_c(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_char_c
+     module function stdlib_linalg_norm_3D_to_2D_err_char_c(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_char_c
+     pure module function stdlib_linalg_norm_4D_to_3D_char_c(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_char_c
+     module function stdlib_linalg_norm_4D_to_3D_err_char_c(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_char_c
+     !> Scalar norms: complex(sp)
+     pure module function stdlib_linalg_norm_1D_order_int_c(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_int_c
+     module function stdlib_linalg_norm_1D_order_err_int_c(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(sp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_int_c
+     pure module function stdlib_linalg_norm_2D_order_int_c(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_int_c
+     module function stdlib_linalg_norm_2D_order_err_int_c(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(sp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_int_c
+     pure module function stdlib_linalg_norm_3D_order_int_c(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_int_c
+     module function stdlib_linalg_norm_3D_order_err_int_c(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(sp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_int_c
+     pure module function stdlib_linalg_norm_4D_order_int_c(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(sp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_int_c
+     module function stdlib_linalg_norm_4D_order_err_int_c(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(sp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(sp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_int_c
+     !> Array norms: complex(sp)
+     pure module function stdlib_linalg_norm_2D_to_1D_int_c(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_int_c
+     module function stdlib_linalg_norm_2D_to_1D_err_int_c(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_int_c
+     pure module function stdlib_linalg_norm_3D_to_2D_int_c(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_int_c
+     module function stdlib_linalg_norm_3D_to_2D_err_int_c(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_int_c
+     pure module function stdlib_linalg_norm_4D_to_3D_int_c(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_int_c
+     module function stdlib_linalg_norm_4D_to_3D_err_int_c(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(sp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(sp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_int_c
+     !> Scalar norms: complex(dp)
+     pure module function stdlib_linalg_norm_1D_order_char_z(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_char_z
+     module function stdlib_linalg_norm_1D_order_err_char_z(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_char_z
+     pure module function stdlib_linalg_norm_2D_order_char_z(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_char_z
+     module function stdlib_linalg_norm_2D_order_err_char_z(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_char_z
+     pure module function stdlib_linalg_norm_3D_order_char_z(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_char_z
+     module function stdlib_linalg_norm_3D_order_err_char_z(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_char_z
+     pure module function stdlib_linalg_norm_4D_order_char_z(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_char_z
+     module function stdlib_linalg_norm_4D_order_err_char_z(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_char_z
+     !> Array norms: complex(dp)
+     pure module function stdlib_linalg_norm_2D_to_1D_char_z(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_char_z
+     module function stdlib_linalg_norm_2D_to_1D_err_char_z(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_char_z
+     pure module function stdlib_linalg_norm_3D_to_2D_char_z(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_char_z
+     module function stdlib_linalg_norm_3D_to_2D_err_char_z(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_char_z
+     pure module function stdlib_linalg_norm_4D_to_3D_char_z(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_char_z
+     module function stdlib_linalg_norm_4D_to_3D_err_char_z(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_char_z
+     !> Scalar norms: complex(dp)
+     pure module function stdlib_linalg_norm_1D_order_int_z(a, order) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_1D_order_int_z
+     module function stdlib_linalg_norm_1D_order_err_int_z(a, order, err) result(nrm)
+        !> Input 1-d matrix a(:)
+        complex(dp), intent(in) :: a(:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_1D_order_err_int_z
+     pure module function stdlib_linalg_norm_2D_order_int_z(a, order) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_2D_order_int_z
+     module function stdlib_linalg_norm_2D_order_err_int_z(a, order, err) result(nrm)
+        !> Input 2-d matrix a(:,:)
+        complex(dp), intent(in) :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_2D_order_err_int_z
+     pure module function stdlib_linalg_norm_3D_order_int_z(a, order) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_3D_order_int_z
+     module function stdlib_linalg_norm_3D_order_err_int_z(a, order, err) result(nrm)
+        !> Input 3-d matrix a(:,:,:)
+        complex(dp), intent(in) :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_3D_order_err_int_z
+     pure module function stdlib_linalg_norm_4D_order_int_z(a, order) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Norm of the matrix.
+        real(dp) :: nrm       
+     end function stdlib_linalg_norm_4D_order_int_z
+     module function stdlib_linalg_norm_4D_order_err_int_z(a, order, err) result(nrm)
+        !> Input 4-d matrix a(:,:,:,:)
+        complex(dp), intent(in) :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                         
+        !> Norm of the matrix.
+        real(dp) :: nrm               
+     end function stdlib_linalg_norm_4D_order_err_int_z
+     !> Array norms: complex(dp)
+     pure module function stdlib_linalg_norm_2D_to_1D_int_z(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))   
+     end function stdlib_linalg_norm_2D_to_1D_int_z
+     module function stdlib_linalg_norm_2D_to_1D_err_int_z(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+     end function stdlib_linalg_norm_2D_to_1D_err_int_z
+     pure module function stdlib_linalg_norm_3D_to_2D_int_z(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))   
+     end function stdlib_linalg_norm_3D_to_2D_int_z
+     module function stdlib_linalg_norm_3D_to_2D_err_int_z(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+     end function stdlib_linalg_norm_3D_to_2D_err_int_z
+     pure module function stdlib_linalg_norm_4D_to_3D_int_z(a, order, dim) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along 
+        integer(ilp), intent(in) :: dim
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))   
+     end function stdlib_linalg_norm_4D_to_3D_int_z
+     module function stdlib_linalg_norm_4D_to_3D_err_int_z(a, order, dim, err) result(nrm)
+        !> Input matrix a[..]
+        complex(dp), intent(in), target :: a(:,:,:,:)
+        !> Order of the matrix norm being computed.
+        integer(ilp), intent(in) :: order
+        !> Dimension the norm is computed along
+        integer(ilp), intent(in) :: dim
+        !> Output state return flag. 
+        type(linalg_state_type), intent(out) :: err                                 
+        !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+        real(dp) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim), merge(size(a, 3),&
+            & size(a, 4), mask=3<dim))     
+     end function stdlib_linalg_norm_4D_to_3D_err_int_z
+  end interface norm  
+
+  !> Vector norm: subroutine interface
+  interface get_norm
+     !! version: experimental 
+     !!
+     !! Computes the vector norm of a generic-rank array \( A \). 
+     !! ([Specification](../page/specs/stdlib_linalg.html#get-norm-computes-the-vector-norm-of-a-generic-rank-array))
+     !! 
+     !!### Summary 
+     !! Subroutine interface that returns one of several scalar norm metrics of a `real` or `complex` 
+     !! input array \( A \), that can have any rank. For generic rank-n arrays, the scalar norm over 
+     !! the whole array is returned by default. If `n>=2` and the optional input dimension `dim` is 
+     !! specified, a rank `n-1` array is returned with dimension `dim` collapsed, containing all 1D 
+     !! array norms evaluated along dimension `dim` only.
+     !! 
+     !!
+     !!### Description
+     !! 
+     !! This `pure subroutine `interface provides methods for computing the vector norm(s) of an array.  
+     !! Supported data types include `real` and `complex`. 
+     !! Input arrays may have generic rank from 1 to 4.
+     !!
+     !! Norm type input is mandatory, and it is provided via the `order` argument. 
+     !! This can be provided as either an `integer` value or a `character` string. 
+     !! Allowed metrics are: 
+     !! - 1-norm \( \sum_i{ \left|a_i\right| } \): `order` = 1 or '1'    
+     !! - Euclidean norm \( \sqrt{\sum_i{ a_i^2 }} \): `order` = 2 or '2'
+     !! - p-norm \( \left( \sum_i{ \left|a_i\right|^p }\right) ^{1/p} \): `integer` `order`, order>=3
+     !! - Infinity norm \( \max_i{ \left|a_i\right| } \): order = huge(0) or 'inf'
+     !! - Minus-infinity norm \( \min_i{ \left|a_i\right| } \): order = -huge(0) or '-inf'
+     !!     
+     !!### Example
+     !!
+     !!```fortran
+     !!
+     !!    real(sp) :: a(3,3), na, rown(3)
+     !!    type(linalg_state_type) :: err
+     !!    a = reshape([1, 2, 3, 4, 5, 6, 7, 8, 9], [3, 3])
+     !!
+     !!    ! L2 norm: whole matrix
+     !!    call get_norm(a, na, 2)
+     !!   
+     !!    ! Infinity norms of each row, with error control
+     !!    call get_norm(a, rown, 'inf', dim=2, err=err)     
+     !!     
+     !!```     
+     !!     
+        !> Scalar norms: real(sp)
+        pure module subroutine norm_1D_char_s(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           real(sp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_char_s
+        pure module subroutine norm_2D_char_s(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           real(sp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_char_s
+        pure module subroutine norm_3D_char_s(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           real(sp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_char_s
+        pure module subroutine norm_4D_char_s(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           real(sp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_char_s
+        !> Array norms: real(sp)
+        pure module subroutine norm_2D_to_1D_char_s(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(sp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_char_s
+        pure module subroutine norm_3D_to_2D_char_s(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(sp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_char_s
+        pure module subroutine norm_4D_to_3D_char_s(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(sp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_char_s
+        !> Scalar norms: real(sp)
+        pure module subroutine norm_1D_int_s(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           real(sp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_int_s
+        pure module subroutine norm_2D_int_s(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           real(sp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_int_s
+        pure module subroutine norm_3D_int_s(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           real(sp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_int_s
+        pure module subroutine norm_4D_int_s(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           real(sp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_int_s
+        !> Array norms: real(sp)
+        pure module subroutine norm_2D_to_1D_int_s(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(sp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_int_s
+        pure module subroutine norm_3D_to_2D_int_s(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(sp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_int_s
+        pure module subroutine norm_4D_to_3D_int_s(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(sp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_int_s
+        !> Scalar norms: real(dp)
+        pure module subroutine norm_1D_char_d(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           real(dp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_char_d
+        pure module subroutine norm_2D_char_d(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           real(dp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_char_d
+        pure module subroutine norm_3D_char_d(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           real(dp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_char_d
+        pure module subroutine norm_4D_char_d(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           real(dp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_char_d
+        !> Array norms: real(dp)
+        pure module subroutine norm_2D_to_1D_char_d(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(dp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_char_d
+        pure module subroutine norm_3D_to_2D_char_d(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(dp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_char_d
+        pure module subroutine norm_4D_to_3D_char_d(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(dp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_char_d
+        !> Scalar norms: real(dp)
+        pure module subroutine norm_1D_int_d(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           real(dp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_int_d
+        pure module subroutine norm_2D_int_d(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           real(dp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_int_d
+        pure module subroutine norm_3D_int_d(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           real(dp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_int_d
+        pure module subroutine norm_4D_int_d(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           real(dp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_int_d
+        !> Array norms: real(dp)
+        pure module subroutine norm_2D_to_1D_int_d(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(dp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_int_d
+        pure module subroutine norm_3D_to_2D_int_d(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(dp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_int_d
+        pure module subroutine norm_4D_to_3D_int_d(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           real(dp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_int_d
+        !> Scalar norms: complex(sp)
+        pure module subroutine norm_1D_char_c(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           complex(sp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_char_c
+        pure module subroutine norm_2D_char_c(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           complex(sp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_char_c
+        pure module subroutine norm_3D_char_c(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           complex(sp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_char_c
+        pure module subroutine norm_4D_char_c(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           complex(sp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_char_c
+        !> Array norms: complex(sp)
+        pure module subroutine norm_2D_to_1D_char_c(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(sp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_char_c
+        pure module subroutine norm_3D_to_2D_char_c(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(sp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_char_c
+        pure module subroutine norm_4D_to_3D_char_c(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(sp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_char_c
+        !> Scalar norms: complex(sp)
+        pure module subroutine norm_1D_int_c(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           complex(sp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_int_c
+        pure module subroutine norm_2D_int_c(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           complex(sp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_int_c
+        pure module subroutine norm_3D_int_c(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           complex(sp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_int_c
+        pure module subroutine norm_4D_int_c(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           complex(sp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(sp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_int_c
+        !> Array norms: complex(sp)
+        pure module subroutine norm_2D_to_1D_int_c(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(sp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_int_c
+        pure module subroutine norm_3D_to_2D_int_c(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(sp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_int_c
+        pure module subroutine norm_4D_to_3D_int_c(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(sp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(sp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_int_c
+        !> Scalar norms: complex(dp)
+        pure module subroutine norm_1D_char_z(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           complex(dp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_char_z
+        pure module subroutine norm_2D_char_z(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           complex(dp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_char_z
+        pure module subroutine norm_3D_char_z(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           complex(dp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_char_z
+        pure module subroutine norm_4D_char_z(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           complex(dp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_char_z
+        !> Array norms: complex(dp)
+        pure module subroutine norm_2D_to_1D_char_z(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(dp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_char_z
+        pure module subroutine norm_3D_to_2D_char_z(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(dp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_char_z
+        pure module subroutine norm_4D_to_3D_char_z(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(dp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           character(len=*), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_char_z
+        !> Scalar norms: complex(dp)
+        pure module subroutine norm_1D_int_z(a, nrm, order, err)
+           !> Input 1-d matrix a(:)
+           complex(dp), intent(in), target :: a(:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_1D_int_z
+        pure module subroutine norm_2D_int_z(a, nrm, order, err)
+           !> Input 2-d matrix a(:,:)
+           complex(dp), intent(in), target :: a(:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_2D_int_z
+        pure module subroutine norm_3D_int_z(a, nrm, order, err)
+           !> Input 3-d matrix a(:,:,:)
+           complex(dp), intent(in), target :: a(:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_3D_int_z
+        pure module subroutine norm_4D_int_z(a, nrm, order, err)
+           !> Input 4-d matrix a(:,:,:,:)
+           complex(dp), intent(in), target :: a(:,:,:,:)
+           !> Norm of the matrix.
+           real(dp), intent(out) :: nrm
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err   
+        end subroutine norm_4D_int_z
+        !> Array norms: complex(dp)
+        pure module subroutine norm_2D_to_1D_int_z(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(dp), intent(in) :: a(:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_2D_to_1D_int_z
+        pure module subroutine norm_3D_to_2D_int_z(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(dp), intent(in) :: a(:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_3D_to_2D_int_z
+        pure module subroutine norm_4D_to_3D_int_z(a, nrm, order, dim, err)
+           !> Input matrix a[..]
+           complex(dp), intent(in) :: a(:,:,:,:)
+           !> Dimension the norm is computed along
+           integer(ilp), intent(in) :: dim        
+           !> Norm of the matrix. (Same shape as `a`, with `dim` dropped).
+           real(dp), intent(out) :: nrm(merge(size(a, 1), size(a, 2), mask=1<dim), merge(size(a, 2), size(a, 3), mask=2<dim),&
+               & merge(size(a, 3), size(a, 4), mask=3<dim))     
+           !> Order of the matrix norm being computed.
+           integer(ilp), intent(in) :: order
+           !> [optional] state return flag. On error if not requested, the code will stop
+           type(linalg_state_type), intent(out), optional :: err           
+        end subroutine  norm_4D_to_3D_int_z
+  end interface get_norm
+
+  !> Matrix norms: function interface
+  interface mnorm
+     !! version: experimental 
+     !!
+     !! Computes the matrix norm of a generic-rank array \( A \). 
+     !! ([Specification](../page/specs/stdlib_linalg.html#mnorm-computes-the-matrix-norm-of-a-generic-rank-array))
+     !! 
+     !!### Summary 
+     !! Return one of several matrix norm metrics of a `real` or `complex` input array \( A \), 
+     !! that can have rank 2 or higher. For rank-2 arrays, the matrix norm is returned.
+     !! If rank>2 and the optional input dimensions `dim` are specified, 
+     !! a rank `n-2` array is returned with dimensions `dim(1),dim(2)` collapsed, containing all 
+     !! matrix norms evaluated over the specified dimensions only. `dim==[1,2]` are assumed as default
+     !! dimensions if not specified.
+     !! 
+     !!### Description
+     !! 
+     !! This interface provides methods for computing the matrix norm(s) of an array.  
+     !! Supported data types include `real` and `complex`. 
+     !! Input arrays must have rank >= 2.
+     !!
+     !! Norm type input is optional, and it is provided via the `order` argument. 
+     !! This can be provided as either an `integer` value or a `character` string. 
+     !! Allowed metrics are: 
+     !! - 1-norm: `order` = 1 or '1'    
+     !! - 2-norm: `order` = 2 or '2'
+     !! - Euclidean/Frobenius: `order` = 'Euclidean','Frobenius', or argument not specified
+     !! - Infinity norm: `order` = huge(0) or 'Inf'
+     !! 
+     !! If an invalid norm type is provided, the routine returns an error state.
+     !!
+     !!### Example
+     !!
+     !!```fortran
+     !!    real(sp) :: a(3,3), na
+     !!    real(sp) :: b(3,3,4), nb(4)  ! Array of 4 3x3 matrices
+     !!    a = reshape([1, 2, 3, 4, 5, 6, 7, 8, 9], [3, 3])
+     !!    
+     !!    ! Euclidean/Frobenius norm of single matrix
+     !!    na = mnorm(a)
+     !!    na = mnorm(a, 'Euclidean')
+     !!   
+     !!    ! 1-norm of each 3x3 matrix in b
+     !!    nb = mnorm(b, 1, dim=[1,2])
+     !!     
+     !!    ! Infinity-norm 
+     !!    na = mnorm(b, 'inf', dim=[3,2])
+     !!```     
+     !!
+      
+      !> Matrix norms: real(sp) rank-2 arrays
+      module function matrix_norm_char_s(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        real(sp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(sp) :: nrm
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_char_s
+      
+      !> Matrix norms: real(sp) higher rank arrays
+      module function matrix_norm_3D_to_1D_char_s(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(sp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_char_s
+      module function matrix_norm_4D_to_2D_char_s(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(sp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_char_s
+      
+      !> Matrix norms: real(sp) rank-2 arrays
+      module function matrix_norm_int_s(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        real(sp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(sp) :: nrm
+        !> Order of the matrix norm being computed.
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_int_s
+      
+      !> Matrix norms: real(sp) higher rank arrays
+      module function matrix_norm_3D_to_1D_int_s(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(sp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_int_s
+      module function matrix_norm_4D_to_2D_int_s(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(sp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_int_s
+      
+      !> Matrix norms: real(dp) rank-2 arrays
+      module function matrix_norm_char_d(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        real(dp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(dp) :: nrm
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_char_d
+      
+      !> Matrix norms: real(dp) higher rank arrays
+      module function matrix_norm_3D_to_1D_char_d(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(dp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_char_d
+      module function matrix_norm_4D_to_2D_char_d(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(dp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_char_d
+      
+      !> Matrix norms: real(dp) rank-2 arrays
+      module function matrix_norm_int_d(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        real(dp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(dp) :: nrm
+        !> Order of the matrix norm being computed.
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_int_d
+      
+      !> Matrix norms: real(dp) higher rank arrays
+      module function matrix_norm_3D_to_1D_int_d(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(dp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_int_d
+      module function matrix_norm_4D_to_2D_int_d(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          real(dp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_int_d
+      
+      !> Matrix norms: complex(sp) rank-2 arrays
+      module function matrix_norm_char_c(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        complex(sp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(sp) :: nrm
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_char_c
+      
+      !> Matrix norms: complex(sp) higher rank arrays
+      module function matrix_norm_3D_to_1D_char_c(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(sp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_char_c
+      module function matrix_norm_4D_to_2D_char_c(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(sp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_char_c
+      
+      !> Matrix norms: complex(sp) rank-2 arrays
+      module function matrix_norm_int_c(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        complex(sp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(sp) :: nrm
+        !> Order of the matrix norm being computed.
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_int_c
+      
+      !> Matrix norms: complex(sp) higher rank arrays
+      module function matrix_norm_3D_to_1D_int_c(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(sp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_int_c
+      module function matrix_norm_4D_to_2D_int_c(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(sp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(sp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_int_c
+      
+      !> Matrix norms: complex(dp) rank-2 arrays
+      module function matrix_norm_char_z(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        complex(dp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(dp) :: nrm
+        !> Order of the matrix norm being computed.
+        character(len=*), intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_char_z
+      
+      !> Matrix norms: complex(dp) higher rank arrays
+      module function matrix_norm_3D_to_1D_char_z(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(dp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_char_z
+      module function matrix_norm_4D_to_2D_char_z(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(dp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          character(len=*), intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_char_z
+      
+      !> Matrix norms: complex(dp) rank-2 arrays
+      module function matrix_norm_int_z(a, order, err) result(nrm)
+        !> Input matrix a(m,n)
+        complex(dp), intent(in), target :: a(:,:)
+        !> Norm of the matrix.        
+        real(dp) :: nrm
+        !> Order of the matrix norm being computed.
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] state return flag. On error if not requested, the code will stop
+        type(linalg_state_type), intent(out), optional :: err      
+      end function matrix_norm_int_z
+      
+      !> Matrix norms: complex(dp) higher rank arrays
+      module function matrix_norm_3D_to_1D_int_z(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(dp), intent(in), contiguous, target :: a(:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_3D_to_1D_int_z
+      module function matrix_norm_4D_to_2D_int_z(a, order, dim, err) result(nrm)
+          !> Input matrix a(m,n)
+          complex(dp), intent(in), contiguous, target :: a(:,:,:,:)
+          !> Norm of the matrix.        
+          real(dp), allocatable :: nrm(:,:)
+          !> Order of the matrix norm being computed.
+          integer(ilp), optional, intent(in) :: order
+          !> [optional] dimensions of the sub-matrices the norms should be evaluated at (default = [1,2])
+          integer(ilp), optional, intent(in) :: dim(2)
+          !> [optional] state return flag. On error if not requested, the code will stop
+          type(linalg_state_type), intent(out), optional :: err        
+      end function matrix_norm_4D_to_2D_int_z
+  end interface mnorm
+
+  !> Matrix exponential: function interface
+  interface expm
+    !! version : experimental
+    !!
+    !! Computes the exponential of a matrix using a rational Pade approximation.
+    !! ([Specification](../page/specs/stdlib_linalg.html#expm))
+    !!
+    !! ### Description
+    !!
+    !! This interface provides methods for computing the exponential of a matrix
+    !! represented as a standard Fortran rank-2 array. Supported data types include
+    !! `real` and `complex`.
+    !!
+    !! By default, the order of the Pade approximation is set to 10. It can be changed
+    !! via the `order` argument that must be non-negative.
+    !!
+    !! If the input matrix is non-square or the order of the Pade approximation is
+    !! negative, the function returns an error state.
+    !!
+    !! ### Example
+    !!
+    !! ```fortran
+    !!  real(dp) :: A(3, 3), E(3, 3)
+    !!
+    !!  A = reshape([1, 2, 3, 4, 5, 6, 7, 8, 9], [3, 3])
+    !!
+    !!  ! Default Pade approximation of the matrix exponential.
+    !!  E = expm(A)
+    !!
+    !!  ! Pade approximation with specified order.
+    !!  E = expm(A, order=12)
+    !! ```
+    !!
+    module function stdlib_linalg_s_expm_fun(A, order) result(E)
+        !> Input matrix a(:, :).
+        real(sp), intent(in) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> Exponential of the input matrix E = exp(A).
+        real(sp), allocatable :: E(:, :)
+    end function stdlib_linalg_s_expm_fun
+    module function stdlib_linalg_d_expm_fun(A, order) result(E)
+        !> Input matrix a(:, :).
+        real(dp), intent(in) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> Exponential of the input matrix E = exp(A).
+        real(dp), allocatable :: E(:, :)
+    end function stdlib_linalg_d_expm_fun
+    module function stdlib_linalg_c_expm_fun(A, order) result(E)
+        !> Input matrix a(:, :).
+        complex(sp), intent(in) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> Exponential of the input matrix E = exp(A).
+        complex(sp), allocatable :: E(:, :)
+    end function stdlib_linalg_c_expm_fun
+    module function stdlib_linalg_z_expm_fun(A, order) result(E)
+        !> Input matrix a(:, :).
+        complex(dp), intent(in) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> Exponential of the input matrix E = exp(A).
+        complex(dp), allocatable :: E(:, :)
+    end function stdlib_linalg_z_expm_fun
+  end interface expm
+
+  !> Matrix exponential: subroutine interface
+  interface matrix_exp
+    !! version : experimental
+    !!
+    !! Computes the exponential of a matrix using a rational Pade approximation.
+    !! ([Specification](../page/specs/stdlib_linalg.html#matrix_exp))
+    !!
+    !! ### Description
+    !!
+    !! This interface provides methods for computing the exponential of a matrix
+    !! represented as a standard Fortran rank-2 array. Supported data types include
+    !! `real` and `complex`.
+    !!
+    !! By default, the order of the Pade approximation is set to 10. It can be changed
+    !! via the `order` argument that must be non-negative.
+    !!
+    !! If the input matrix is non-square or the order of the Pade approximation is
+    !! negative, the function returns an error state.
+    !!
+    !! ### Example
+    !!
+    !! ```fortran
+    !!  real(dp) :: A(3, 3), E(3, 3)
+    !!
+    !!  A = reshape([1, 2, 3, 4, 5, 6, 7, 8, 9], [3, 3])
+    !!
+    !!  ! Default Pade approximation of the matrix exponential.
+    !!  call matrix_exp(A, E) ! Out-of-place
+    !!  ! call matrix_exp(A) for in-place computation.
+    !!
+    !!  ! Pade approximation with specified order.
+    !!  call matrix_exp(A, E, order=12)
+    !! ```
+    !!
+    module subroutine stdlib_linalg_s_expm_inplace(A, order, err)
+        !> Input matrix A(n, n) / Output matrix E = exp(A)
+        real(sp), intent(inout) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_s_expm_inplace
+
+    module subroutine stdlib_linalg_s_expm(A, E, order, err)
+        !> Input matrix A(n, n)
+        real(sp), intent(in) :: A(:, :)
+        !> Output matrix exponential E = exp(A)
+        real(sp), intent(out) :: E(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_s_expm
+    module subroutine stdlib_linalg_d_expm_inplace(A, order, err)
+        !> Input matrix A(n, n) / Output matrix E = exp(A)
+        real(dp), intent(inout) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_d_expm_inplace
+
+    module subroutine stdlib_linalg_d_expm(A, E, order, err)
+        !> Input matrix A(n, n)
+        real(dp), intent(in) :: A(:, :)
+        !> Output matrix exponential E = exp(A)
+        real(dp), intent(out) :: E(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_d_expm
+    module subroutine stdlib_linalg_c_expm_inplace(A, order, err)
+        !> Input matrix A(n, n) / Output matrix E = exp(A)
+        complex(sp), intent(inout) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_c_expm_inplace
+
+    module subroutine stdlib_linalg_c_expm(A, E, order, err)
+        !> Input matrix A(n, n)
+        complex(sp), intent(in) :: A(:, :)
+        !> Output matrix exponential E = exp(A)
+        complex(sp), intent(out) :: E(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_c_expm
+    module subroutine stdlib_linalg_z_expm_inplace(A, order, err)
+        !> Input matrix A(n, n) / Output matrix E = exp(A)
+        complex(dp), intent(inout) :: A(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_z_expm_inplace
+
+    module subroutine stdlib_linalg_z_expm(A, E, order, err)
+        !> Input matrix A(n, n)
+        complex(dp), intent(in) :: A(:, :)
+        !> Output matrix exponential E = exp(A)
+        complex(dp), intent(out) :: E(:, :)
+        !> [optional] Order of the Pade approximation (default `order=10`)
+        integer(ilp), optional, intent(in) :: order
+        !> [optional] Error handling.
+        type(linalg_state_type), optional, intent(out) :: err
+    end subroutine stdlib_linalg_z_expm
+  end interface matrix_exp
 contains
 
 
@@ -2595,10 +6618,87 @@ contains
     !>
     !> Constructs the identity matrix.
     !> ([Specification](../page/specs/stdlib_linalg.html#eye-construct-the-identity-matrix))
-    pure function eye(dim1, dim2) result(result)
+    pure function eye_rsp(dim1, dim2, mold) result(result)
 
         integer, intent(in) :: dim1
         integer, intent(in), optional :: dim2
+        real(sp), intent(in) :: mold        
+        real(sp), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_rsp
+    pure function eye_rdp(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        real(dp), intent(in) , optional :: mold        
+        real(dp), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_rdp
+    pure function eye_csp(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        complex(sp), intent(in) :: mold        
+        complex(sp), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_csp
+    pure function eye_cdp(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        complex(dp), intent(in) :: mold        
+        complex(dp), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_cdp
+    pure function eye_iint8(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        integer(int8), intent(in) :: mold        
         integer(int8), allocatable :: result(:, :)
 
         integer :: dim2_
@@ -2607,12 +6707,69 @@ contains
         dim2_ = optval(dim2, dim1)
         allocate(result(dim1, dim2_))
         
-        result = 0_int8
+        result = 0
         do i = 1, min(dim1, dim2_)
-            result(i, i) = 1_int8
+            result(i, i) = 1
         end do
 
-    end function eye
+    end function eye_iint8
+    pure function eye_iint16(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        integer(int16), intent(in) :: mold        
+        integer(int16), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_iint16
+    pure function eye_iint32(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        integer(int32), intent(in) :: mold        
+        integer(int32), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_iint32
+    pure function eye_iint64(dim1, dim2, mold) result(result)
+
+        integer, intent(in) :: dim1
+        integer, intent(in), optional :: dim2
+        integer(int64), intent(in) :: mold        
+        integer(int64), allocatable :: result(:, :)
+
+        integer :: dim2_
+        integer :: i
+
+        dim2_ = optval(dim2, dim1)
+        allocate(result(dim1, dim2_))
+        
+        result = 0
+        do i = 1, min(dim1, dim2_)
+            result(i, i) = 1
+        end do
+
+    end function eye_iint64
 
       function trace_rsp(A) result(res)
         real(sp), intent(in) :: A(:,:)
@@ -3301,6 +7458,46 @@ contains
         res = .true. !otherwise A is Hermitian
       end function is_hermitian_cdp
 
+      pure module function hermitian_rsp(a) result(ah)
+        real(sp), intent(in) :: a(:,:)
+        real(sp) :: ah(size(a, 2), size(a, 1))
+        ah = transpose(a)
+      end function hermitian_rsp
+      pure module function hermitian_rdp(a) result(ah)
+        real(dp), intent(in) :: a(:,:)
+        real(dp) :: ah(size(a, 2), size(a, 1))
+        ah = transpose(a)
+      end function hermitian_rdp
+      pure module function hermitian_csp(a) result(ah)
+        complex(sp), intent(in) :: a(:,:)
+        complex(sp) :: ah(size(a, 2), size(a, 1))
+        ah = conjg(transpose(a))
+      end function hermitian_csp
+      pure module function hermitian_cdp(a) result(ah)
+        complex(dp), intent(in) :: a(:,:)
+        complex(dp) :: ah(size(a, 2), size(a, 1))
+        ah = conjg(transpose(a))
+      end function hermitian_cdp
+      pure module function hermitian_iint8(a) result(ah)
+        integer(int8), intent(in) :: a(:,:)
+        integer(int8) :: ah(size(a, 2), size(a, 1))
+        ah = transpose(a)
+      end function hermitian_iint8
+      pure module function hermitian_iint16(a) result(ah)
+        integer(int16), intent(in) :: a(:,:)
+        integer(int16) :: ah(size(a, 2), size(a, 1))
+        ah = transpose(a)
+      end function hermitian_iint16
+      pure module function hermitian_iint32(a) result(ah)
+        integer(int32), intent(in) :: a(:,:)
+        integer(int32) :: ah(size(a, 2), size(a, 1))
+        ah = transpose(a)
+      end function hermitian_iint32
+      pure module function hermitian_iint64(a) result(ah)
+        integer(int64), intent(in) :: a(:,:)
+        integer(int64) :: ah(size(a, 2), size(a, 1))
+        ah = transpose(a)
+      end function hermitian_iint64
 
       function is_triangular_rsp(A,uplo) result(res)
         real(sp), intent(in) :: A(:,:)

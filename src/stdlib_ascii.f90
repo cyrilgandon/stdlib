@@ -69,35 +69,35 @@ module stdlib_ascii
 
     !> Returns a new character sequence which is the lower case 
     !> version of the input character sequence
-    !> This method is pure and returns a character sequence
+    !> This method is elemental and returns a character sequence
     interface to_lower
         module procedure :: to_lower
     end interface to_lower
 
     !> Returns a new character sequence which is the upper case
     !> version of the input character sequence
-    !> This method is pure and returns a character sequence
+    !> This method is elemental and returns a character sequence
     interface to_upper
         module procedure :: to_upper
     end interface to_upper
 
     !> Returns a new character sequence which is the title case
     !> version of the input character sequence
-    !> This method is pure and returns a character sequence
+    !> This method is elemental and returns a character sequence
     interface to_title
         module procedure :: to_title
     end interface to_title
 
     !> Returns a new character sequence which is the sentence case
     !> version of the input character sequence
-    !> This method is pure and returns a character sequence
+    !> This method is elemental and returns a character sequence
     interface to_sentence
         module procedure :: to_sentence
     end interface to_sentence
 
     !> Returns a new character sequence which is reverse of
     !> the input charater sequence
-    !> This method is pure and returns a character sequence
+    !> This method is elemental and returns a character sequence
     interface reverse
         module procedure :: reverse
     end interface reverse
@@ -106,13 +106,13 @@ module stdlib_ascii
 contains
 
     !> Checks whether `c` is an ASCII letter (A .. Z, a .. z).
-    pure logical function is_alpha(c)
+    elemental logical function is_alpha(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_alpha = (c >= 'A' .and. c <= 'Z') .or. (c >= 'a' .and. c <= 'z')
     end function
 
     !> Checks whether `c` is a letter or a number (0 .. 9, a .. z, A .. Z).
-    pure logical function is_alphanum(c)
+    elemental logical function is_alphanum(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_alphanum = (c >= '0' .and. c <= '9') .or. (c >= 'a' .and. c <= 'z') &
             .or. (c >= 'A' .and. c <= 'Z')
@@ -120,13 +120,13 @@ contains
 
     !> Checks whether or not `c` is in the ASCII character set -
     !> i.e. in the range 0 .. 0x7F.
-    pure logical function is_ascii(c)
+    elemental logical function is_ascii(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_ascii = iachar(c) <= int(z'7F')
     end function
 
     !> Checks whether `c` is a control character.
-    pure logical function is_control(c)
+    elemental logical function is_control(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c)
@@ -134,19 +134,19 @@ contains
     end function
 
     !> Checks whether `c` is a digit (0 .. 9).
-    pure logical function is_digit(c)
+    elemental logical function is_digit(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_digit = ('0' <= c) .and. (c <= '9')
     end function
 
     !> Checks whether `c` is a digit in base 8 (0 .. 7).
-    pure logical function is_octal_digit(c)
+    elemental logical function is_octal_digit(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_octal_digit = (c >= '0') .and. (c <= '7');
     end function
 
     !> Checks whether `c` is a digit in base 16 (0 .. 9, A .. F, a .. f).
-    pure logical function is_hex_digit(c)
+    elemental logical function is_hex_digit(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_hex_digit = (c >= '0' .and. c <= '9') .or. (c >= 'a' .and. c <= 'f') &
             .or. (c >= 'A' .and. c <= 'F')
@@ -155,7 +155,7 @@ contains
     !> Checks whether or not `c` is a punctuation character. That includes
     !> all ASCII characters which are not control characters, letters,
     !> digits, or whitespace.
-    pure logical function is_punctuation(c)
+    elemental logical function is_punctuation(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c) !       '~'                 '!'
@@ -165,7 +165,7 @@ contains
 
     !> Checks whether or not `c` is a printable character other than the
     !> space character.
-    pure logical function is_graphical(c)
+    elemental logical function is_graphical(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c)
@@ -176,7 +176,7 @@ contains
 
     !> Checks whether or not `c` is a printable character - including the
     !> space character.
-    pure logical function is_printable(c)
+    elemental logical function is_printable(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c)
@@ -185,7 +185,7 @@ contains
     end function
 
     !> Checks whether `c` is a lowercase ASCII letter (a .. z).
-    pure logical function is_lower(c)
+    elemental logical function is_lower(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c)
@@ -193,7 +193,7 @@ contains
     end function
 
     !> Checks whether `c` is an uppercase ASCII letter (A .. Z).
-    pure logical function is_upper(c)
+    elemental logical function is_upper(c)
         character(len=1), intent(in) :: c !! The character to test.
         is_upper = (c >= 'A') .and. (c <= 'Z')
     end function
@@ -201,7 +201,7 @@ contains
     !> Checks whether or not `c` is a whitespace character. That includes the
     !> space, tab, vertical tab, form feed, carriage return, and linefeed
     !> characters.
-    pure logical function is_white(c)
+    elemental logical function is_white(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c)             ! TAB, LF, VT, FF, CR
@@ -210,7 +210,7 @@ contains
 
     !> Checks whether or not `c` is a blank character. That includes the
     !> only the space and tab characters
-    pure logical function is_blank(c)
+    elemental logical function is_blank(c)
         character(len=1), intent(in) :: c !! The character to test.
         integer :: ic
         ic = iachar(c)             ! TAB
@@ -219,7 +219,7 @@ contains
 
     !> Returns the corresponding lowercase letter, if `c` is an uppercase
     !> ASCII character, otherwise `c` itself.
-    pure function char_to_lower(c) result(t)
+    elemental function char_to_lower(c) result(t)
         character(len=1), intent(in) :: c !! A character.
         character(len=1)             :: t
         integer, parameter :: wp= iachar('a')-iachar('A'), BA=iachar('A'), BZ=iachar('Z')
@@ -233,7 +233,7 @@ contains
 
     !> Returns the corresponding uppercase letter, if `c` is a lowercase
     !> ASCII character, otherwise `c` itself.
-    pure function char_to_upper(c) result(t)
+    elemental function char_to_upper(c) result(t)
         character(len=1), intent(in) :: c !! A character.
         character(len=1)             :: t
         integer, parameter :: wp= iachar('a')-iachar('A'), la=iachar('a'), lz=iachar('z')
@@ -249,7 +249,7 @@ contains
     !> ([Specification](../page/specs/stdlib_ascii.html#to_lower))
     !>
     !> Version: experimental
-    pure function to_lower(string) result(lower_string)
+    elemental function to_lower(string) result(lower_string)
         character(len=*), intent(in) :: string
         character(len=len(string)) :: lower_string
         integer :: i
@@ -264,7 +264,7 @@ contains
     !> ([Specification](../page/specs/stdlib_ascii.html#to_upper))
     !>
     !> Version: experimental
-    pure function to_upper(string) result(upper_string)
+    elemental function to_upper(string) result(upper_string)
         character(len=*), intent(in) :: string
         character(len=len(string)) :: upper_string
         integer :: i
@@ -279,7 +279,7 @@ contains
     !> ([Specification](../page/specs/stdlib_ascii.html#to_title))
     !>
     !> Version: experimental
-    pure function to_title(string) result(title_string)
+    elemental function to_title(string) result(title_string)
         character(len=*), intent(in) :: string
         character(len=len(string)) :: title_string
         integer :: i
@@ -306,7 +306,7 @@ contains
     !> ([Specification](../page/specs/stdlib_ascii.html#to_sentence))
     !>
     !> Version: experimental
-    pure function to_sentence(string) result(sentence_string)
+    elemental function to_sentence(string) result(sentence_string)
         character(len=*), intent(in) :: string
         character(len=len(string)) :: sentence_string
         integer :: i, n
@@ -332,7 +332,7 @@ contains
     !> ([Specification](../page/specs/stdlib_ascii.html#reverse))
     !>
     !> Version: experimental
-    pure function reverse(string) result(reverse_string)
+    elemental function reverse(string) result(reverse_string)
         character(len=*), intent(in) :: string
         character(len=len(string)) :: reverse_string
         integer :: i, n

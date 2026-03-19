@@ -2,40 +2,16 @@
 submodule (stdlib_linalg) stdlib_linalg_cholesky
      use stdlib_linalg_constants
      use stdlib_linalg_lapack, only: potrf
+     use stdlib_linalg_lapack_aux, only: handle_potrf_info
      use stdlib_linalg_state, only: linalg_state_type, linalg_error_handling, LINALG_ERROR, &
          LINALG_INTERNAL_ERROR, LINALG_VALUE_ERROR
-     implicit none(type,external)
+     implicit none
 
      
      character(*), parameter :: this = 'cholesky'
 
      contains
 
-     elemental subroutine handle_potrf_info(info,triangle,lda,n,err)
-         character, intent(in) :: triangle
-         integer(ilp), intent(in) :: info,lda,n
-         type(linalg_state_type), intent(out) :: err
-
-         ! Process output
-         select case (info)
-            case (0)
-                ! Success
-            case (-1)
-                err = linalg_state_type(this,LINALG_INTERNAL_ERROR,'invalid triangle selection: ', &
-                                   triangle,'. should be U/L')
-            case (-2)
-                err = linalg_state_type(this,LINALG_VALUE_ERROR,'invalid matrix size n=',n)
-            case (-4)
-                err = linalg_state_type(this,LINALG_VALUE_ERROR,'invalid lda=',lda,': is < n = ',n)
-            case (1:)
-                err = linalg_state_type(this,LINALG_ERROR,'cannot complete factorization:',info, &
-                                   '-th order leading minor is not positive definite')
-            case default
-                err = linalg_state_type(this,LINALG_INTERNAL_ERROR,'catastrophic error')
-         end select
-
-     end subroutine handle_potrf_info
-     
      
      ! Compute the Cholesky factorization of a symmetric / Hermitian matrix, A = L*L^T = U^T*U. 
      ! The factorization is returned in-place, overwriting matrix A
@@ -51,7 +27,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
 
          !> Local variables
          type(linalg_state_type) :: err0
-         integer(ilp) :: lda,n,info,i,j
+         integer(ilp) :: lda,n,info,j
          logical(lk) :: lower_,other_zeroed_
          character :: triangle
          real(sp), parameter :: zero = 0.0_sp
@@ -81,7 +57,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
          
              ! Compute factorization
              call potrf(triangle,n,a,lda,info)
-             call handle_potrf_info(info,triangle,lda,n,err0)
+             call handle_potrf_info(this, info,triangle,lda,n,err0)
                       
              ! Zero-out the unused part of matrix A
              clean_unused: if (other_zeroed_ .and. err0%ok()) then    
@@ -176,7 +152,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
 
          !> Local variables
          type(linalg_state_type) :: err0
-         integer(ilp) :: lda,n,info,i,j
+         integer(ilp) :: lda,n,info,j
          logical(lk) :: lower_,other_zeroed_
          character :: triangle
          real(dp), parameter :: zero = 0.0_dp
@@ -206,7 +182,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
          
              ! Compute factorization
              call potrf(triangle,n,a,lda,info)
-             call handle_potrf_info(info,triangle,lda,n,err0)
+             call handle_potrf_info(this, info,triangle,lda,n,err0)
                       
              ! Zero-out the unused part of matrix A
              clean_unused: if (other_zeroed_ .and. err0%ok()) then    
@@ -301,7 +277,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
 
          !> Local variables
          type(linalg_state_type) :: err0
-         integer(ilp) :: lda,n,info,i,j
+         integer(ilp) :: lda,n,info,j
          logical(lk) :: lower_,other_zeroed_
          character :: triangle
          complex(sp), parameter :: zero = 0.0_sp
@@ -331,7 +307,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
          
              ! Compute factorization
              call potrf(triangle,n,a,lda,info)
-             call handle_potrf_info(info,triangle,lda,n,err0)
+             call handle_potrf_info(this, info,triangle,lda,n,err0)
                       
              ! Zero-out the unused part of matrix A
              clean_unused: if (other_zeroed_ .and. err0%ok()) then    
@@ -426,7 +402,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
 
          !> Local variables
          type(linalg_state_type) :: err0
-         integer(ilp) :: lda,n,info,i,j
+         integer(ilp) :: lda,n,info,j
          logical(lk) :: lower_,other_zeroed_
          character :: triangle
          complex(dp), parameter :: zero = 0.0_dp
@@ -456,7 +432,7 @@ submodule (stdlib_linalg) stdlib_linalg_cholesky
          
              ! Compute factorization
              call potrf(triangle,n,a,lda,info)
-             call handle_potrf_info(info,triangle,lda,n,err0)
+             call handle_potrf_info(this, info,triangle,lda,n,err0)
                       
              ! Zero-out the unused part of matrix A
              clean_unused: if (other_zeroed_ .and. err0%ok()) then    

@@ -4,14 +4,13 @@ submodule (stdlib_linalg) stdlib_linalg_determinant
      use stdlib_linalg_lapack, only: getrf
      use stdlib_linalg_state, only: linalg_state_type, linalg_error_handling, LINALG_ERROR, &
          LINALG_INTERNAL_ERROR, LINALG_VALUE_ERROR
-     implicit none(type,external)
+     implicit none
 
      ! Function interface
      character(*), parameter :: this = 'determinant'
 
      contains
 
-     ! BLAS/LAPACK backends do not currently support xdp
      pure module function stdlib_linalg_pure_rspdeterminant(a) result(det)     
      !!### Summary
      !! Compute determinant of a real square matrix (pure interface).

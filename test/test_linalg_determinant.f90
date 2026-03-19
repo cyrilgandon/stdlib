@@ -19,16 +19,16 @@ module test_linalg_determinant
         
         allocate(tests(0))
 
-        tests = [tests,new_unittest("$eye_det_rsp",test_rsp_eye_determinant)]
-        tests = [tests,new_unittest("$eye_det_multiple_rsp",test_rsp_eye_multiple)]
-        tests = [tests,new_unittest("$eye_det_rdp",test_rdp_eye_determinant)]
-        tests = [tests,new_unittest("$eye_det_multiple_rdp",test_rdp_eye_multiple)]
-        tests = [tests,new_unittest("$eye_det_csp",test_csp_eye_determinant)]
-        tests = [tests,new_unittest("$eye_det_multiple_csp",test_csp_eye_multiple)]
-        tests = [tests,new_unittest("$eye_det_cdp",test_cdp_eye_determinant)]
-        tests = [tests,new_unittest("$eye_det_multiple_cdp",test_cdp_eye_multiple)]
-        tests = [tests,new_unittest("$complex_det_cdp",test_csp_complex_determinant)]
-        tests = [tests,new_unittest("$complex_det_cdp",test_cdp_complex_determinant)]
+        call add_test(tests,new_unittest("$eye_det_rsp",test_rsp_eye_determinant))
+        call add_test(tests,new_unittest("$eye_det_multiple_rsp",test_rsp_eye_multiple))
+        call add_test(tests,new_unittest("$eye_det_rdp",test_rdp_eye_determinant))
+        call add_test(tests,new_unittest("$eye_det_multiple_rdp",test_rdp_eye_multiple))
+        call add_test(tests,new_unittest("$eye_det_csp",test_csp_eye_determinant))
+        call add_test(tests,new_unittest("$eye_det_multiple_csp",test_csp_eye_multiple))
+        call add_test(tests,new_unittest("$eye_det_cdp",test_cdp_eye_determinant))
+        call add_test(tests,new_unittest("$eye_det_multiple_cdp",test_cdp_eye_multiple))
+        call add_test(tests,new_unittest("$complex_det_cdp",test_csp_complex_determinant))
+        call add_test(tests,new_unittest("$complex_det_cdp",test_cdp_complex_determinant))
 
     end subroutine test_matrix_determinant
 
@@ -38,7 +38,6 @@ module test_linalg_determinant
 
         type(linalg_state_type) :: state
 
-        integer(ilp) :: i
         integer(ilp), parameter :: n = 128_ilp
 
         real(sp) :: a(n,n),deta
@@ -74,7 +73,7 @@ module test_linalg_determinant
 
         integer(ilp), parameter :: n = 4_ilp
         real(sp), parameter :: coef = 0.01_sp
-        integer(ilp) :: i,j
+        integer(ilp) :: i
         real(sp) :: a(n,n),deta
 
         !> Multiply eye by a very small number
@@ -98,7 +97,6 @@ module test_linalg_determinant
 
         type(linalg_state_type) :: state
 
-        integer(ilp) :: i
         integer(ilp), parameter :: n = 128_ilp
 
         real(dp) :: a(n,n),deta
@@ -134,7 +132,7 @@ module test_linalg_determinant
 
         integer(ilp), parameter :: n = 4_ilp
         real(dp), parameter :: coef = 0.01_dp
-        integer(ilp) :: i,j
+        integer(ilp) :: i
         real(dp) :: a(n,n),deta
 
         !> Multiply eye by a very small number
@@ -158,7 +156,6 @@ module test_linalg_determinant
 
         type(linalg_state_type) :: state
 
-        integer(ilp) :: i
         integer(ilp), parameter :: n = 128_ilp
 
         complex(sp) :: a(n,n),deta
@@ -194,7 +191,7 @@ module test_linalg_determinant
 
         integer(ilp), parameter :: n = 4_ilp
         real(sp), parameter :: coef = 0.01_sp
-        integer(ilp) :: i,j
+        integer(ilp) :: i
         complex(sp) :: a(n,n),deta
 
         !> Multiply eye by a very small number
@@ -218,7 +215,6 @@ module test_linalg_determinant
 
         type(linalg_state_type) :: state
 
-        integer(ilp) :: i
         integer(ilp), parameter :: n = 128_ilp
 
         complex(dp) :: a(n,n),deta
@@ -254,7 +250,7 @@ module test_linalg_determinant
 
         integer(ilp), parameter :: n = 4_ilp
         real(dp), parameter :: coef = 0.01_dp
-        integer(ilp) :: i,j
+        integer(ilp) :: i
         complex(dp) :: a(n,n),deta
 
         !> Multiply eye by a very small number
@@ -279,7 +275,7 @@ module test_linalg_determinant
 
         type(linalg_state_type) :: state
 
-        integer(ilp) :: i,j,n
+        integer(ilp) :: i,n
         integer(ilp), parameter :: nmax = 10_ilp
 
         complex(sp), parameter :: res(nmax) = [complex(sp)::(1,1),(0,2),(-2,2),(-4,0),(-4,-4), &
@@ -318,7 +314,7 @@ module test_linalg_determinant
 
         type(linalg_state_type) :: state
 
-        integer(ilp) :: i,j,n
+        integer(ilp) :: i,n
         integer(ilp), parameter :: nmax = 10_ilp
 
         complex(dp), parameter :: res(nmax) = [complex(dp)::(1,1),(0,2),(-2,2),(-4,0),(-4,-4), &
@@ -352,6 +348,27 @@ module test_linalg_determinant
 
     end subroutine test_cdp_complex_determinant
 
+    
+    ! gcc-15 bugfix utility
+    subroutine add_test(tests,new_test)
+        type(unittest_type), allocatable, intent(inout) :: tests(:)    
+        type(unittest_type), intent(in) :: new_test
+        
+        integer :: n
+        type(unittest_type), allocatable :: new_tests(:)
+        
+        if (allocated(tests)) then 
+            n = size(tests)
+        else
+            n = 0
+        end if
+        
+        allocate(new_tests(n+1))
+        if (n>0) new_tests(1:n) = tests(1:n)
+                 new_tests(1+n) = new_test
+        call move_alloc(from=new_tests,to=tests)        
+        
+    end subroutine add_test
 
 end module test_linalg_determinant
 

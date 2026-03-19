@@ -1,22 +1,19 @@
 module stdlib_specialfunctions_gamma
-    use iso_fortran_env, only : qp => real128
-    use stdlib_kinds, only :  sp, dp, int8, int16, int32, int64
+    use ieee_arithmetic, only: ieee_value, ieee_quiet_nan
+    use stdlib_kinds, only :  sp, dp, xdp, qp, int8, int16, int32, int64
     use stdlib_error, only : error_stop
 
     implicit none
     private
 
-    integer(int8), parameter :: max_fact_int8 = 6_int8
+    integer(int8), parameter  :: max_fact_int8 = 6_int8
     integer(int16), parameter :: max_fact_int16 = 8_int16
     integer(int32), parameter :: max_fact_int32 = 13_int32
     integer(int64), parameter :: max_fact_int64 = 21_int64
 
     real(sp), parameter :: tol_sp = epsilon(1.0_sp)
     real(dp), parameter :: tol_dp = epsilon(1.0_dp)
-    real(qp), parameter :: tol_qp = epsilon(1.0_qp)
-
-
-
+    
     public :: gamma, log_gamma, log_factorial
     public :: lower_incomplete_gamma, log_lower_incomplete_gamma
     public :: upper_incomplete_gamma, log_upper_incomplete_gamma
@@ -304,14 +301,13 @@ contains
 
 
 
-
     impure elemental function gamma_csp(z) result(res)
         complex(sp), intent(in) :: z
         complex(sp) :: res
         integer :: i
 
         real(sp), parameter :: zero_k1 = 0.0_sp
-        real(dp), parameter :: zero = 0.0_dp, half = 0.5_dp,             &
+        real(dp), parameter :: half = 0.5_dp,             &
                              one = 1.0_dp, pi = acos(- one), sqpi = sqrt(pi)
         complex(dp) :: y, x, sum
 
@@ -330,8 +326,6 @@ contains
                                           4.63399473359905637e-6_dp,       &
                                          -2.71994908488607704e-9_dp]
         ! parameters from above referenced source.
-
-
 
 
         if(abs(z % im) < tol_sp) then
@@ -373,49 +367,46 @@ contains
         res = y
     end function gamma_csp
 
-
     impure elemental function gamma_cdp(z) result(res)
         complex(dp), intent(in) :: z
         complex(dp) :: res
         integer :: i
 
         real(dp), parameter :: zero_k1 = 0.0_dp
-        real(qp), parameter :: zero = 0.0_qp, half = 0.5_qp,             &
-                             one = 1.0_qp, pi = acos(- one), sqpi = sqrt(pi)
-        complex(qp) :: y, x, sum
+        real(dp), parameter :: half = 0.5_dp,             &
+                             one = 1.0_dp, pi = acos(- one), sqpi = sqrt(pi)
+        complex(dp) :: y, x, sum
 
 
         integer, parameter :: n = 24
-        real(qp), parameter :: r = 25.617904_qp
-        real(qp), parameter :: d(0 : n)=                                         &
-                         [1.0087261714899910504854136977047144166e-11_qp,  &
-                              1.6339627701280724777912729825256860624_qp,  &
-                          -1.4205787702221583745972794018472259342e+1_qp,  &
-                           5.6689501646428786119793943350900908698e+1_qp,  &
-                          -1.3766376824252176069406853670529834070e+2_qp,  &
-                           2.2739972766608392140035874845640820558e+2_qp,  &
-                          -2.7058382145757164380300118233258834430e+2_qp,  &
-                          2.39614374587263042692333711131832094166e+2_qp,  &
-                          -1.6090450559507517723393498276315290189e+2_qp,  &
-                          8.27378183187161305711485619113605553100e+1_qp,  &
-                          -3.2678977082742592701862249152153110206e+1_qp,  &
-                             9.89018079175824824537131521501652931756_qp,  &
-                             -2.2762136356329318377213053650799013041_qp,  &
-                          3.93265017303573867227590563182750070164e-1_qp,  &
-                          -5.0051054352146209116457193223422284239e-2_qp,  &
-                          4.57142601898244576789629257292603538238e-3_qp,  &
-                          -2.8922592124650765614787233510990416584e-4_qp,  &
-                          1.20833375377219592849746118012697473202e-5_qp,  &
-                          -3.1220812187551248389268359432609135033e-7_qp,  &
-                          4.55117045361638520378367871355819524460e-9_qp,  &
-                         -3.2757632817493581828033170342853173968e-11_qp,  &
-                         9.49784279240135747819870224486376897253e-14_qp,  &
-                         -7.9480594917454410117072562195702526836e-17_qp,  &
-                         1.04692819439870077791406760109955648941e-20_qp,  &
-                         -5.8990280044857540075384586350723191533e-26_qp]
+        real(dp), parameter :: r = 25.617904_dp
+        real(dp), parameter :: d(0 : n)=                                         &
+                         [1.0087261714899910504854136977047144166e-11_dp,  &
+                              1.6339627701280724777912729825256860624_dp,  &
+                          -1.4205787702221583745972794018472259342e+1_dp,  &
+                           5.6689501646428786119793943350900908698e+1_dp,  &
+                          -1.3766376824252176069406853670529834070e+2_dp,  &
+                           2.2739972766608392140035874845640820558e+2_dp,  &
+                          -2.7058382145757164380300118233258834430e+2_dp,  &
+                          2.39614374587263042692333711131832094166e+2_dp,  &
+                          -1.6090450559507517723393498276315290189e+2_dp,  &
+                          8.27378183187161305711485619113605553100e+1_dp,  &
+                          -3.2678977082742592701862249152153110206e+1_dp,  &
+                             9.89018079175824824537131521501652931756_dp,  &
+                             -2.2762136356329318377213053650799013041_dp,  &
+                          3.93265017303573867227590563182750070164e-1_dp,  &
+                          -5.0051054352146209116457193223422284239e-2_dp,  &
+                          4.57142601898244576789629257292603538238e-3_dp,  &
+                          -2.8922592124650765614787233510990416584e-4_dp,  &
+                          1.20833375377219592849746118012697473202e-5_dp,  &
+                          -3.1220812187551248389268359432609135033e-7_dp,  &
+                          4.55117045361638520378367871355819524460e-9_dp,  &
+                         -3.2757632817493581828033170342853173968e-11_dp,  &
+                         9.49784279240135747819870224486376897253e-14_dp,  &
+                         -7.9480594917454410117072562195702526836e-17_dp,  &
+                         1.04692819439870077791406760109955648941e-20_dp,  &
+                         -5.8990280044857540075384586350723191533e-26_dp]
         ! parameters from above referenced source.
-
-
 
 
         if(abs(z % im) < tol_dp) then
@@ -436,7 +427,7 @@ contains
 
         end if
 
-        sum = cmplx(d(0), kind = qp)
+        sum = cmplx(d(0), kind = dp)
 
         do i = 1, n
 
@@ -458,15 +449,12 @@ contains
     end function gamma_cdp
 
 
-
-
-
     impure elemental function l_gamma_iint8(z) result(res)
     !
     ! Logarithm of gamma function for integer input
     !
         integer(int8), intent(in) :: z
-        real :: res
+        real(dp) :: res
         integer(int8) :: i
         integer(int8), parameter :: zero = 0_int8, one = 1_int8, two = 2_int8
 
@@ -485,7 +473,7 @@ contains
 
             do i = one, z - one
 
-               res = res + log(real(i))
+               res = res + log(real(i,dp))
 
             end do
 
@@ -497,7 +485,7 @@ contains
     ! Logarithm of gamma function for integer input
     !
         integer(int16), intent(in) :: z
-        real :: res
+        real(dp) :: res
         integer(int16) :: i
         integer(int16), parameter :: zero = 0_int16, one = 1_int16, two = 2_int16
 
@@ -516,7 +504,7 @@ contains
 
             do i = one, z - one
 
-               res = res + log(real(i))
+               res = res + log(real(i,dp))
 
             end do
 
@@ -528,7 +516,7 @@ contains
     ! Logarithm of gamma function for integer input
     !
         integer(int32), intent(in) :: z
-        real :: res
+        real(dp) :: res
         integer(int32) :: i
         integer(int32), parameter :: zero = 0_int32, one = 1_int32, two = 2_int32
 
@@ -547,7 +535,7 @@ contains
 
             do i = one, z - one
 
-               res = res + log(real(i))
+               res = res + log(real(i,dp))
 
             end do
 
@@ -559,7 +547,7 @@ contains
     ! Logarithm of gamma function for integer input
     !
         integer(int64), intent(in) :: z
-        real :: res
+        real(dp) :: res
         integer(int64) :: i
         integer(int64), parameter :: zero = 0_int64, one = 1_int64, two = 2_int64
 
@@ -578,7 +566,7 @@ contains
 
             do i = one, z - one
 
-               res = res + log(real(i))
+               res = res + log(real(i,dp))
 
             end do
 
@@ -879,7 +867,7 @@ contains
         real(sp) :: d
         integer :: m, i
         complex(dp) :: zr, zr2, sum, s
-        real(sp), parameter :: z_limit = 10_sp, zero_k1 = 0.0_sp
+        real(sp), parameter :: z_limit = 10.0_sp, zero_k1 = 0.0_sp
         integer, parameter :: n = 20
         real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp,              &
                              pi = acos(-one), ln2pi = log(2 * pi)
@@ -974,32 +962,32 @@ contains
         complex(dp) :: res, z1, z2
         real(dp) :: d
         integer :: m, i
-        complex(qp) :: zr, zr2, sum, s
-        real(dp), parameter :: z_limit = 10_dp, zero_k1 = 0.0_dp
+        complex(dp) :: zr, zr2, sum, s
+        real(dp), parameter :: z_limit = 10.0_dp, zero_k1 = 0.0_dp
         integer, parameter :: n = 20
-        real(qp), parameter :: zero = 0.0_qp, one = 1.0_qp,              &
+        real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp,              &
                              pi = acos(-one), ln2pi = log(2 * pi)
-        real(qp), parameter :: a(n) = [                                          &
-                           .8333333333333333333333333333333333333333E-1_qp,&
-                          -.2777777777777777777777777777777777777778E-2_qp,&
-                           .7936507936507936507936507936507936507937E-3_qp,&
-                          -.5952380952380952380952380952380952380952E-3_qp,&
-                           .8417508417508417508417508417508417508418E-3_qp,&
-                          -.1917526917526917526917526917526917526918E-2_qp,&
-                           .6410256410256410256410256410256410256410E-2_qp,&
-                          -.2955065359477124183006535947712418300654E-1_qp,&
-                           .1796443723688305731649384900158893966944E+0_qp,&
-                          -.1392432216905901116427432216905901116427E+1_qp,&
-                           .1340286404416839199447895100069013112491E+2_qp,&
-                          -.1568482846260020173063651324520889738281E+3_qp,&
-                           .2193103333333333333333333333333333333333E+4_qp,&
-                          -.3610877125372498935717326521924223073648E+5_qp,&
-                           .6914722688513130671083952507756734675533E+6_qp,&
-                          -.1523822153940741619228336495888678051866E+8_qp,&
-                           .3829007513914141414141414141414141414141E+9_qp,&
-                         -.1088226603578439108901514916552510537473E+11_qp,&
-                          .3473202837650022522522522522522522522523E+12_qp,&
-                         -.1236960214226927445425171034927132488108E+14_qp]
+        real(dp), parameter :: a(n) = [                                          &
+                           .8333333333333333333333333333333333333333E-1_dp,&
+                          -.2777777777777777777777777777777777777778E-2_dp,&
+                           .7936507936507936507936507936507936507937E-3_dp,&
+                          -.5952380952380952380952380952380952380952E-3_dp,&
+                           .8417508417508417508417508417508417508418E-3_dp,&
+                          -.1917526917526917526917526917526917526918E-2_dp,&
+                           .6410256410256410256410256410256410256410E-2_dp,&
+                          -.2955065359477124183006535947712418300654E-1_dp,&
+                           .1796443723688305731649384900158893966944E+0_dp,&
+                          -.1392432216905901116427432216905901116427E+1_dp,&
+                           .1340286404416839199447895100069013112491E+2_dp,&
+                          -.1568482846260020173063651324520889738281E+3_dp,&
+                           .2193103333333333333333333333333333333333E+4_dp,&
+                          -.3610877125372498935717326521924223073648E+5_dp,&
+                           .6914722688513130671083952507756734675533E+6_dp,&
+                          -.1523822153940741619228336495888678051866E+8_dp,&
+                           .3829007513914141414141414141414141414141E+9_dp,&
+                         -.1088226603578439108901514916552510537473E+11_dp,&
+                          .3473202837650022522522522522522522522523E+12_dp,&
+                         -.1236960214226927445425171034927132488108E+14_dp]
         ! parameters from above reference
 
         z2 = z
@@ -1030,15 +1018,15 @@ contains
         sum = (((sum + a(10)) * zr2 + a(9)) * zr2 + a(8)) * zr2
         sum = (((sum + a(7)) * zr2 + a(6)) * zr2 + a(5)) * zr2
         sum = (((sum + a(4)) * zr2 + a(3)) * zr2 + a(2)) * zr2
-        sum = (sum + a(1)) * zr + ln2pi / 2 - z1 + (z1 - 0.5_qp) * log(z1)
+        sum = (sum + a(1)) * zr + ln2pi / 2 - z1 + (z1 - 0.5_dp) * log(z1)
 
         if(m /= 0) then
 
-            s = cmplx(zero, zero, kind = qp)
+            s = cmplx(zero, zero, kind = dp)
 
             do i = 1, m
 
-                s = s + log(cmplx(z1, kind = qp) - i)
+                s = s + log(cmplx(z1, kind = dp) - i)
 
             end do
 
@@ -1066,9 +1054,9 @@ contains
     ! Log(n!)
     !
         integer(int8), intent(in) :: n
-        real(dp) :: res
+        real(sp) :: res
         integer(int8), parameter :: zero = 0_int8, one = 1_int8, two = 2_int8
-        real(dp), parameter :: zero_dp = 0.0_dp
+        real(sp), parameter :: zero_sp = 0.0_sp, one_sp = 1.0_sp
 
         if(n < zero) call error_stop("Error(l_factorial): Logarithm of"        &
             //" factorial function argument must be non-negative")
@@ -1077,15 +1065,15 @@ contains
 
         case (zero)
 
-            res = zero_dp
+            res = zero_sp
 
         case (one)
 
-            res = zero_dp
+            res = zero_sp
 
         case (two : )
 
-            res = l_gamma(n + 1, 1.0_dp)
+            res = l_gamma(n + 1, one_sp)
 
         end select
     end function l_factorial_iint8
@@ -1095,9 +1083,9 @@ contains
     ! Log(n!)
     !
         integer(int16), intent(in) :: n
-        real(dp) :: res
+        real(sp) :: res
         integer(int16), parameter :: zero = 0_int16, one = 1_int16, two = 2_int16
-        real(dp), parameter :: zero_dp = 0.0_dp
+        real(sp), parameter :: zero_sp = 0.0_sp, one_sp = 1.0_sp
 
         if(n < zero) call error_stop("Error(l_factorial): Logarithm of"        &
             //" factorial function argument must be non-negative")
@@ -1106,15 +1094,15 @@ contains
 
         case (zero)
 
-            res = zero_dp
+            res = zero_sp
 
         case (one)
 
-            res = zero_dp
+            res = zero_sp
 
         case (two : )
 
-            res = l_gamma(n + 1, 1.0_dp)
+            res = l_gamma(n + 1, one_sp)
 
         end select
     end function l_factorial_iint16
@@ -1124,9 +1112,9 @@ contains
     ! Log(n!)
     !
         integer(int32), intent(in) :: n
-        real(dp) :: res
+        real(sp) :: res
         integer(int32), parameter :: zero = 0_int32, one = 1_int32, two = 2_int32
-        real(dp), parameter :: zero_dp = 0.0_dp
+        real(sp), parameter :: zero_sp = 0.0_sp, one_sp = 1.0_sp
 
         if(n < zero) call error_stop("Error(l_factorial): Logarithm of"        &
             //" factorial function argument must be non-negative")
@@ -1135,15 +1123,15 @@ contains
 
         case (zero)
 
-            res = zero_dp
+            res = zero_sp
 
         case (one)
 
-            res = zero_dp
+            res = zero_sp
 
         case (two : )
 
-            res = l_gamma(n + 1, 1.0_dp)
+            res = l_gamma(n + 1, one_sp)
 
         end select
     end function l_factorial_iint32
@@ -1153,9 +1141,9 @@ contains
     ! Log(n!)
     !
         integer(int64), intent(in) :: n
-        real(dp) :: res
+        real(sp) :: res
         integer(int64), parameter :: zero = 0_int64, one = 1_int64, two = 2_int64
-        real(dp), parameter :: zero_dp = 0.0_dp
+        real(sp), parameter :: zero_sp = 0.0_sp, one_sp = 1.0_sp
 
         if(n < zero) call error_stop("Error(l_factorial): Logarithm of"        &
             //" factorial function argument must be non-negative")
@@ -1164,19 +1152,18 @@ contains
 
         case (zero)
 
-            res = zero_dp
+            res = zero_sp
 
         case (one)
 
-            res = zero_dp
+            res = zero_sp
 
         case (two : )
 
-            res = l_gamma(n + 1, 1.0_dp)
+            res = l_gamma(n + 1, one_sp)
 
         end select
     end function l_factorial_iint64
-
 
 
 
@@ -1192,9 +1179,9 @@ contains
     ! Fortran 90 program by Jim-215-Fisher
     !
         real(sp), intent(in) :: p, x
-        integer :: n, m
+        integer :: n
 
-        real(dp) :: res, p_lim, a, b, g, c, d, y, ss
+        real(dp) :: res, p_lim, a, b, g, c, d, y
         real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp
         real(dp), parameter :: dm = tiny(1.0_dp) * 10 ** 6
         real(sp), parameter :: zero_k1 = 0.0_sp
@@ -1220,6 +1207,9 @@ contains
             call error_stop("Error(gpx): Incomplete gamma function with "      &
             //"negative x must come with a whole number p not too small")
 
+        if(x < zero_k1) call error_stop("Error(gpx): Incomplete gamma"         &
+            // " function with negative x must have an integer parameter p")
+
         if(p >= p_lim) then     !use modified Lentz method of continued fraction
                                 !for eq. (15) in the above reference.
             a = one
@@ -1285,35 +1275,13 @@ contains
 
             end do
 
-        else                            !Algorithm 2 in the reference
+        else
+            g = ieee_value(1._sp, ieee_quiet_nan)
 
-            m = nint(ss)
-            a = - x
-            c = one / a
-            d = p - one
-            b = c * (a - d)
-            n = 1
-
-            do
-
-                c = d * (d - one) / (a * a)
-                d = d - 2
-                y = c * (a - d)
-                b = b + y
-                n = n + 1
-
-                if(n > int((p - 2) / 2) .or. y < b * tol_dp) exit
-
-            end do
-
-            if(y >= b * tol_dp .and. mod(m , 2) /= 0) b = b + d * c / a
-
-            g = ((-1) ** m * exp(-a + log_gamma(p) - (p - 1) * log(a)) + b) / a
         end if
 
         res = g
     end function gpx_rsp
-
 
     impure elemental function gpx_rdp(p, x) result(res)
     !
@@ -1326,11 +1294,11 @@ contains
     ! Fortran 90 program by Jim-215-Fisher
     !
         real(dp), intent(in) :: p, x
-        integer :: n, m
+        integer :: n
 
-        real(qp) :: res, p_lim, a, b, g, c, d, y, ss
-        real(qp), parameter :: zero = 0.0_qp, one = 1.0_qp
-        real(qp), parameter :: dm = tiny(1.0_qp) * 10 ** 6
+        real(dp) :: res, p_lim, a, b, g, c, d, y
+        real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp
+        real(dp), parameter :: dm = tiny(1.0_dp) * 10 ** 6
         real(dp), parameter :: zero_k1 = 0.0_dp
 
         if(p <= zero_k1) call error_stop("Error(gpx): Incomplete gamma"        &
@@ -1354,6 +1322,9 @@ contains
             call error_stop("Error(gpx): Incomplete gamma function with "      &
             //"negative x must come with a whole number p not too small")
 
+        if(x < zero_k1) call error_stop("Error(gpx): Incomplete gamma"         &
+            // " function with negative x must have an integer parameter p")
+
         if(p >= p_lim) then     !use modified Lentz method of continued fraction
                                 !for eq. (15) in the above reference.
             a = one
@@ -1385,7 +1356,7 @@ contains
                 g = g * y
                 n = n + 1
 
-                if(abs(y - one) < tol_qp) exit
+                if(abs(y - one) < tol_dp) exit
 
             end do
 
@@ -1415,34 +1386,13 @@ contains
                 g = g * y
                 n = n + 1
 
-                if(abs(y - one) < tol_qp) exit
+                if(abs(y - one) < tol_dp) exit
 
             end do
 
-        else                            !Algorithm 2 in the reference
+        else
+            g = ieee_value(1._dp, ieee_quiet_nan)
 
-            m = nint(ss)
-            a = - x
-            c = one / a
-            d = p - one
-            b = c * (a - d)
-            n = 1
-
-            do
-
-                c = d * (d - one) / (a * a)
-                d = d - 2
-                y = c * (a - d)
-                b = b + y
-                n = n + 1
-
-                if(n > int((p - 2) / 2) .or. y < b * tol_qp) exit
-
-            end do
-
-            if(y >= b * tol_qp .and. mod(m , 2) /= 0) b = b + d * c / a
-
-            g = ((-1) ** m * exp(-a + log_gamma(p) - (p - 1) * log(a)) + b) / a
         end if
 
         res = g
@@ -1462,7 +1412,7 @@ contains
         integer(int8), intent(in) :: p
         real(sp), intent(in) :: x
         real(sp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(sp), parameter :: zero = 0.0_sp, one = 1.0_sp
         real(sp), parameter :: dm = tiny(1.0_sp) * 10 ** 6
         integer(int8), parameter :: zero_k1 = 0_int8, two = 2_int8
@@ -1497,7 +1447,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -1595,7 +1545,7 @@ contains
         integer(int8), intent(in) :: p
         real(dp), intent(in) :: x
         real(dp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp
         real(dp), parameter :: dm = tiny(1.0_dp) * 10 ** 6
         integer(int8), parameter :: zero_k1 = 0_int8, two = 2_int8
@@ -1630,7 +1580,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -1728,7 +1678,7 @@ contains
         integer(int16), intent(in) :: p
         real(sp), intent(in) :: x
         real(sp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(sp), parameter :: zero = 0.0_sp, one = 1.0_sp
         real(sp), parameter :: dm = tiny(1.0_sp) * 10 ** 6
         integer(int16), parameter :: zero_k1 = 0_int16, two = 2_int16
@@ -1763,7 +1713,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -1861,7 +1811,7 @@ contains
         integer(int16), intent(in) :: p
         real(dp), intent(in) :: x
         real(dp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp
         real(dp), parameter :: dm = tiny(1.0_dp) * 10 ** 6
         integer(int16), parameter :: zero_k1 = 0_int16, two = 2_int16
@@ -1896,7 +1846,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -1994,7 +1944,7 @@ contains
         integer(int32), intent(in) :: p
         real(sp), intent(in) :: x
         real(sp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(sp), parameter :: zero = 0.0_sp, one = 1.0_sp
         real(sp), parameter :: dm = tiny(1.0_sp) * 10 ** 6
         integer(int32), parameter :: zero_k1 = 0_int32, two = 2_int32
@@ -2029,7 +1979,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -2127,7 +2077,7 @@ contains
         integer(int32), intent(in) :: p
         real(dp), intent(in) :: x
         real(dp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp
         real(dp), parameter :: dm = tiny(1.0_dp) * 10 ** 6
         integer(int32), parameter :: zero_k1 = 0_int32, two = 2_int32
@@ -2162,7 +2112,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -2260,7 +2210,7 @@ contains
         integer(int64), intent(in) :: p
         real(sp), intent(in) :: x
         real(sp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(sp), parameter :: zero = 0.0_sp, one = 1.0_sp
         real(sp), parameter :: dm = tiny(1.0_sp) * 10 ** 6
         integer(int64), parameter :: zero_k1 = 0_int64, two = 2_int64
@@ -2295,7 +2245,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 
@@ -2393,7 +2343,7 @@ contains
         integer(int64), intent(in) :: p
         real(dp), intent(in) :: x
         real(dp) :: res, p_lim, a, b, g, c, d, y
-        integer :: n, m
+        integer :: n
         real(dp), parameter :: zero = 0.0_dp, one = 1.0_dp
         real(dp), parameter :: dm = tiny(1.0_dp) * 10 ** 6
         integer(int64), parameter :: zero_k1 = 0_int64, two = 2_int64
@@ -2428,7 +2378,7 @@ contains
 
                 if(mod(n, 2) == 0) then
 
-                    a = (1 - p - n / 2) * x
+                    a = (one - p - n / 2) * x
 
                 else
 

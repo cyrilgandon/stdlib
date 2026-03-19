@@ -2,9 +2,10 @@ submodule(stdlib_linalg) stdlib_linalg_svd
 !! Singular-Value Decomposition    
      use stdlib_linalg_constants
      use stdlib_linalg_lapack, only: gesdd
+     use stdlib_linalg_lapack_aux, only: handle_gesdd_info
      use stdlib_linalg_state, only: linalg_state_type, linalg_error_handling, LINALG_ERROR, &
          LINALG_INTERNAL_ERROR, LINALG_VALUE_ERROR, LINALG_SUCCESS
-     implicit none(type,external)
+     implicit none
      
      character(*), parameter :: this = 'svd'
      
@@ -23,38 +24,6 @@ submodule(stdlib_linalg) stdlib_linalg_svd
      character, parameter :: GESDD_SINGVAL_ONLY    = 'N'
 
      contains
-
-     !> Process GESDD output flag
-     elemental subroutine handle_gesdd_info(err,info,m,n)
-        !> Error handler
-        type(linalg_state_type), intent(inout) :: err
-        !> GESDD return flag
-        integer(ilp), intent(in) :: info
-        !> Input matrix size
-        integer(ilp), intent(in) :: m,n
-
-        select case (info)
-           case (0)
-               ! Success!
-               err%state = LINALG_SUCCESS
-           case (-1)
-               err = linalg_state_type(this,LINALG_INTERNAL_ERROR,'Invalid task ID on input to GESDD.')
-           case (-5,-3:-2)
-               err = linalg_state_type(this,LINALG_VALUE_ERROR,'invalid matrix size: a=',[m,n])
-           case (-8)
-               err = linalg_state_type(this,LINALG_VALUE_ERROR,'invalid matrix U size, with a=',[m,n])
-           case (-10)
-               err = linalg_state_type(this,LINALG_VALUE_ERROR,'invalid matrix V size, with a=',[m,n])
-           case (-4)
-               err = linalg_state_type(this,LINALG_VALUE_ERROR,'A contains invalid/NaN values.')
-           case (1:)
-               err = linalg_state_type(this,LINALG_ERROR,'SVD computation did not converge.')
-           case default
-               err = linalg_state_type(this,LINALG_INTERNAL_ERROR,'Unknown error returned by GESDD.')
-        end select
-
-     end subroutine handle_gesdd_info
-
 
 
      !> Singular values of matrix A
@@ -144,7 +113,6 @@ submodule(stdlib_linalg) stdlib_linalg_svd
          character :: task
          real(sp), target :: work_dummy(1),u_dummy(1,1),vt_dummy(1,1)
          real(sp), allocatable :: work(:)
-         real(sp), allocatable :: rwork(:)
          real(sp), pointer :: amat(:,:),umat(:,:),vtmat(:,:)
 
          !> Matrix determinant size
@@ -251,19 +219,23 @@ submodule(stdlib_linalg) stdlib_linalg_svd
          lwork = -1_ilp
          call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                     work_dummy,lwork,iwork,info)
-         call handle_gesdd_info(err0,info,m,n)
+         call handle_gesdd_info(this,err0,info,m,n)
 
          ! Compute SVD
          if (info==0) then
 
             !> Prepare working storage
-            lwork = nint(real(work_dummy(1),kind=sp), kind=ilp)
+            ! Check if the returned working storage space is smaller than the largest value
+            ! allowed by lwork
+            lwork = merge(nint(real(work_dummy(1),kind=sp), kind=ilp) &
+                          , huge(lwork) &
+                          , real(work_dummy(1),kind=sp) < real(huge(lwork),kind=sp) )
             allocate(work(lwork))
 
             !> Compute SVD
             call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                        work,lwork,iwork,info)
-            call handle_gesdd_info(err0,info,m,n)
+            call handle_gesdd_info(this,err0,info,m,n)
 
          endif
 
@@ -362,7 +334,6 @@ submodule(stdlib_linalg) stdlib_linalg_svd
          character :: task
          real(dp), target :: work_dummy(1),u_dummy(1,1),vt_dummy(1,1)
          real(dp), allocatable :: work(:)
-         real(dp), allocatable :: rwork(:)
          real(dp), pointer :: amat(:,:),umat(:,:),vtmat(:,:)
 
          !> Matrix determinant size
@@ -469,19 +440,23 @@ submodule(stdlib_linalg) stdlib_linalg_svd
          lwork = -1_ilp
          call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                     work_dummy,lwork,iwork,info)
-         call handle_gesdd_info(err0,info,m,n)
+         call handle_gesdd_info(this,err0,info,m,n)
 
          ! Compute SVD
          if (info==0) then
 
             !> Prepare working storage
-            lwork = nint(real(work_dummy(1),kind=dp), kind=ilp)
+            ! Check if the returned working storage space is smaller than the largest value
+            ! allowed by lwork
+            lwork = merge(nint(real(work_dummy(1),kind=dp), kind=ilp) &
+                          , huge(lwork) &
+                          , real(work_dummy(1),kind=dp) < real(huge(lwork),kind=dp) )
             allocate(work(lwork))
 
             !> Compute SVD
             call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                        work,lwork,iwork,info)
-            call handle_gesdd_info(err0,info,m,n)
+            call handle_gesdd_info(this,err0,info,m,n)
 
          endif
 
@@ -692,19 +667,23 @@ submodule(stdlib_linalg) stdlib_linalg_svd
          lwork = -1_ilp
          call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                     work_dummy,lwork,rwork,iwork,info)
-         call handle_gesdd_info(err0,info,m,n)
+         call handle_gesdd_info(this,err0,info,m,n)
 
          ! Compute SVD
          if (info==0) then
 
             !> Prepare working storage
-            lwork = nint(real(work_dummy(1),kind=sp), kind=ilp)
+            ! Check if the returned working storage space is smaller than the largest value
+            ! allowed by lwork
+            lwork = merge(nint(real(work_dummy(1),kind=sp), kind=ilp) &
+                          , huge(lwork) &
+                          , real(work_dummy(1),kind=sp) < real(huge(lwork),kind=sp) )
             allocate(work(lwork))
 
             !> Compute SVD
             call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                        work,lwork,rwork,iwork,info)
-            call handle_gesdd_info(err0,info,m,n)
+            call handle_gesdd_info(this,err0,info,m,n)
 
          endif
 
@@ -915,19 +894,23 @@ submodule(stdlib_linalg) stdlib_linalg_svd
          lwork = -1_ilp
          call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                     work_dummy,lwork,rwork,iwork,info)
-         call handle_gesdd_info(err0,info,m,n)
+         call handle_gesdd_info(this,err0,info,m,n)
 
          ! Compute SVD
          if (info==0) then
 
             !> Prepare working storage
-            lwork = nint(real(work_dummy(1),kind=dp), kind=ilp)
+            ! Check if the returned working storage space is smaller than the largest value
+            ! allowed by lwork
+            lwork = merge(nint(real(work_dummy(1),kind=dp), kind=ilp) &
+                          , huge(lwork) &
+                          , real(work_dummy(1),kind=dp) < real(huge(lwork),kind=dp) )
             allocate(work(lwork))
 
             !> Compute SVD
             call gesdd(task,m,n,amat,lda,s,umat,ldu,vtmat,ldvt,&
                        work,lwork,rwork,iwork,info)
-            call handle_gesdd_info(err0,info,m,n)
+            call handle_gesdd_info(this,err0,info,m,n)
 
          endif
 

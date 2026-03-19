@@ -1,7 +1,8 @@
+
 module stdlib_constants
     !! Constants
     !! ([Specification](../page/specs/stdlib_constants.html))
-    use stdlib_kinds, only: sp, dp
+    use stdlib_kinds
     use stdlib_codata, only: SPEED_OF_LIGHT_IN_VACUUM, &
                              VACUUM_ELECTRIC_PERMITTIVITY, &
                              VACUUM_MAG_PERMEABILITY, &
@@ -33,7 +34,7 @@ module stdlib_constants
     real(dp), parameter, public :: epsilon_0 = VACUUM_ELECTRIC_PERMITTIVITY%value !! vacuum mag. permeability
     real(dp), parameter, public :: h = PLANCK_CONSTANT%value !! Planck constant
     real(dp), parameter, public :: Planck = PLANCK_CONSTANT%value !! Planck constant
-    real(dp), parameter, public :: hbar = PLANCK_CONSTANT%value / PI_dp !! Reduced Planck constant
+    real(dp), parameter, public :: hbar = PLANCK_CONSTANT%value / (2.0_dp * PI_dp) !! Reduced Planck constant
     real(dp), parameter, public :: G = NEWTONIAN_CONSTANT_OF_GRAVITATION%value !! Newtonian constant of gravitation
     real(dp), parameter, public :: gravitation_constant = NEWTONIAN_CONSTANT_OF_GRAVITATION%value !! Newtonian constant of gravitation
     real(dp), parameter, public :: g2 = STANDARD_ACCELERATION_OF_GRAVITY%value !! Standard acceleration of gravity
@@ -57,5 +58,23 @@ module stdlib_constants
     real(dp), parameter, public :: u = ATOMIC_MASS_CONSTANT%value !! Atomic mass constant
 
     ! Additional constants if needed
+    integer(int8), parameter, public :: zero_int8 = 0_int8
+    integer(int8), parameter, public :: one_int8  = 1_int8
+    integer(int16), parameter, public :: zero_int16 = 0_int16
+    integer(int16), parameter, public :: one_int16  = 1_int16
+    integer(int32), parameter, public :: zero_int32 = 0_int32
+    integer(int32), parameter, public :: one_int32  = 1_int32
+    integer(int64), parameter, public :: zero_int64 = 0_int64
+    integer(int64), parameter, public :: one_int64  = 1_int64
+    real(sp), parameter, public :: zero_sp = 0._sp
+    real(sp), parameter, public :: one_sp  = 1._sp
+    real(sp), parameter, public :: log2_sp = log(2.0_sp)
+    real(dp), parameter, public :: zero_dp = 0._dp
+    real(dp), parameter, public :: one_dp  = 1._dp
+    real(dp), parameter, public :: log2_dp = log(2.0_dp)
+    complex(sp), parameter, public :: zero_csp = (0._sp,0._sp)
+    complex(sp), parameter, public :: one_csp  = (1._sp,0._sp)
+    complex(dp), parameter, public :: zero_cdp = (0._dp,0._dp)
+    complex(dp), parameter, public :: one_cdp  = (1._dp,0._dp)
 
 end module stdlib_constants
