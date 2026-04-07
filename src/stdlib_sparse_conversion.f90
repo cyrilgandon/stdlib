@@ -2,6 +2,7 @@
 !!
 ! This code was modified from https://github.com/jalvesz/FSPARSE by its author: Alves Jose
 module stdlib_sparse_conversion
+    use stdlib_optval, only: optval
     use stdlib_sorting, only: sort
     use stdlib_sparse_constants
     use stdlib_sparse_kinds
@@ -86,6 +87,20 @@ module stdlib_sparse_conversion
         module procedure :: csr2dense_cdp
     end interface
     public :: csr2dense
+    
+    !! version: experimental
+    !!
+    !! Conversion from csc to dense
+    !! Enables creating a dense 2D matrix from the non-zero values stored in a CSC format
+    !! The dense matrix can be allocated on the fly if not pre-allocated by the user.
+    !! [Specifications](../page/specs/stdlib_sparse.html#sparse_conversion)
+    interface csc2dense
+        module procedure :: csc2dense_sp
+        module procedure :: csc2dense_dp
+        module procedure :: csc2dense_csp
+        module procedure :: csc2dense_cdp
+    end interface
+    public :: csc2dense
 
     !! version: experimental
     !!
@@ -350,10 +365,19 @@ contains
     end subroutine
 
 
-    subroutine coo2csr_sp(COO,CSR)
-        type(COO_sp_type), intent(in)  :: COO
-        type(CSR_sp_type), intent(out) :: CSR
+    subroutine coo2csr_sp(COO, CSR, sort_data)
+        type(COO_sp_type), intent(inout) :: COO
+        type(CSR_sp_type), intent(out)   :: CSR
+        logical, intent(in), optional :: sort_data
+        logical :: sort_data_
         integer(ilp) :: i
+
+        sort_data_ = optval(x=sort_data, default=.false.)
+
+        if(sort_data_) then
+            call sort_coo_unique_sp( COO%index, COO%data, COO%nnz, COO%nrows, COO%ncols )
+            COO%is_sorted = .true.
+        end if
 
         CSR%nnz = COO%nnz; CSR%nrows = COO%nrows; CSR%ncols = COO%ncols
         CSR%storage = COO%storage
@@ -377,10 +401,19 @@ contains
         end do
     end subroutine
 
-    subroutine coo2csr_dp(COO,CSR)
-        type(COO_dp_type), intent(in)  :: COO
-        type(CSR_dp_type), intent(out) :: CSR
+    subroutine coo2csr_dp(COO, CSR, sort_data)
+        type(COO_dp_type), intent(inout) :: COO
+        type(CSR_dp_type), intent(out)   :: CSR
+        logical, intent(in), optional :: sort_data
+        logical :: sort_data_
         integer(ilp) :: i
+
+        sort_data_ = optval(x=sort_data, default=.false.)
+
+        if(sort_data_) then
+            call sort_coo_unique_dp( COO%index, COO%data, COO%nnz, COO%nrows, COO%ncols )
+            COO%is_sorted = .true.
+        end if
 
         CSR%nnz = COO%nnz; CSR%nrows = COO%nrows; CSR%ncols = COO%ncols
         CSR%storage = COO%storage
@@ -404,10 +437,19 @@ contains
         end do
     end subroutine
 
-    subroutine coo2csr_csp(COO,CSR)
-        type(COO_csp_type), intent(in)  :: COO
-        type(CSR_csp_type), intent(out) :: CSR
+    subroutine coo2csr_csp(COO, CSR, sort_data)
+        type(COO_csp_type), intent(inout) :: COO
+        type(CSR_csp_type), intent(out)   :: CSR
+        logical, intent(in), optional :: sort_data
+        logical :: sort_data_
         integer(ilp) :: i
+
+        sort_data_ = optval(x=sort_data, default=.false.)
+
+        if(sort_data_) then
+            call sort_coo_unique_csp( COO%index, COO%data, COO%nnz, COO%nrows, COO%ncols )
+            COO%is_sorted = .true.
+        end if
 
         CSR%nnz = COO%nnz; CSR%nrows = COO%nrows; CSR%ncols = COO%ncols
         CSR%storage = COO%storage
@@ -431,10 +473,19 @@ contains
         end do
     end subroutine
 
-    subroutine coo2csr_cdp(COO,CSR)
-        type(COO_cdp_type), intent(in)  :: COO
-        type(CSR_cdp_type), intent(out) :: CSR
+    subroutine coo2csr_cdp(COO, CSR, sort_data)
+        type(COO_cdp_type), intent(inout) :: COO
+        type(CSR_cdp_type), intent(out)   :: CSR
+        logical, intent(in), optional :: sort_data
+        logical :: sort_data_
         integer(ilp) :: i
+
+        sort_data_ = optval(x=sort_data, default=.false.)
+
+        if(sort_data_) then
+            call sort_coo_unique_cdp( COO%index, COO%data, COO%nnz, COO%nrows, COO%ncols )
+            COO%is_sorted = .true.
+        end if
 
         CSR%nnz = COO%nnz; CSR%nrows = COO%nrows; CSR%ncols = COO%ncols
         CSR%storage = COO%storage
@@ -630,7 +681,7 @@ contains
             end do
         end if
     end subroutine
-
+    
     subroutine csr2dense_dp(CSR,dense)
         type(CSR_dp_type), intent(in) :: CSR
         real(dp), allocatable, intent(out) :: dense(:,:)
@@ -653,7 +704,7 @@ contains
             end do
         end if
     end subroutine
-
+    
     subroutine csr2dense_csp(CSR,dense)
         type(CSR_csp_type), intent(in) :: CSR
         complex(sp), allocatable, intent(out) :: dense(:,:)
@@ -676,7 +727,7 @@ contains
             end do
         end if
     end subroutine
-
+    
     subroutine csr2dense_cdp(CSR,dense)
         type(CSR_cdp_type), intent(in) :: CSR
         complex(dp), allocatable, intent(out) :: dense(:,:)
@@ -695,6 +746,99 @@ contains
                     dense(i,CSR%col(j)) = CSR%data(j)
                     if( i == CSR%col(j) ) cycle
                     dense(CSR%col(j),i) = CSR%data(j)
+                end do
+            end do
+        end if
+    end subroutine
+    
+
+    subroutine csc2dense_sp(CSC,dense)
+        type(CSC_sp_type), intent(in) :: CSC
+        real(sp), allocatable, intent(out) :: dense(:,:)
+        integer(ilp) :: i, j
+
+        if(.not.allocated(dense)) allocate(dense(CSC%nrows,CSC%ncols),source=zero_sp)
+        if( CSC%storage == sparse_full) then
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                end do
+            end do
+        else
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                    if( j == CSC%row(i) ) cycle
+                    dense(j,CSC%row(i)) = CSC%data(i)
+                end do
+            end do
+        end if
+    end subroutine
+
+    subroutine csc2dense_dp(CSC,dense)
+        type(CSC_dp_type), intent(in) :: CSC
+        real(dp), allocatable, intent(out) :: dense(:,:)
+        integer(ilp) :: i, j
+
+        if(.not.allocated(dense)) allocate(dense(CSC%nrows,CSC%ncols),source=zero_dp)
+        if( CSC%storage == sparse_full) then
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                end do
+            end do
+        else
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                    if( j == CSC%row(i) ) cycle
+                    dense(j,CSC%row(i)) = CSC%data(i)
+                end do
+            end do
+        end if
+    end subroutine
+
+    subroutine csc2dense_csp(CSC,dense)
+        type(CSC_csp_type), intent(in) :: CSC
+        complex(sp), allocatable, intent(out) :: dense(:,:)
+        integer(ilp) :: i, j
+
+        if(.not.allocated(dense)) allocate(dense(CSC%nrows,CSC%ncols),source=zero_csp)
+        if( CSC%storage == sparse_full) then
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                end do
+            end do
+        else
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                    if( j == CSC%row(i) ) cycle
+                    dense(j,CSC%row(i)) = CSC%data(i)
+                end do
+            end do
+        end if
+    end subroutine
+
+    subroutine csc2dense_cdp(CSC,dense)
+        type(CSC_cdp_type), intent(in) :: CSC
+        complex(dp), allocatable, intent(out) :: dense(:,:)
+        integer(ilp) :: i, j
+
+        if(.not.allocated(dense)) allocate(dense(CSC%nrows,CSC%ncols),source=zero_cdp)
+        if( CSC%storage == sparse_full) then
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                end do
+            end do
+        else
+            do j = 1, CSC%ncols
+                do i = CSC%colptr(j), CSC%colptr(j+1)-1
+                    dense(CSC%row(i),j) = CSC%data(i)
+                    if( j == CSC%row(i) ) cycle
+                    dense(j,CSC%row(i)) = CSC%data(i)
                 end do
             end do
         end if
