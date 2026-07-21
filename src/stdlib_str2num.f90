@@ -281,13 +281,11 @@ module stdlib_str2num
         ! Find first non white space
         p = shift_to_nonwhitespace(s)
         !----------------------------------------------
-        ! Verify leading sign
+        ! Verify leading negative
         sign = 1
         if(p<=len(s)) then
             if(iachar(s(p:p)) == minus_sign+digit_0 ) then
                 sign = -1
-                p = p + 1
-            else if(iachar(s(p:p)) == plus_sign+digit_0 ) then
                 p = p + 1
             end if
         else
@@ -327,13 +325,11 @@ module stdlib_str2num
         ! Find first non white space
         p = shift_to_nonwhitespace(s)
         !----------------------------------------------
-        ! Verify leading sign
+        ! Verify leading negative
         sign = 1
         if(p<=len(s)) then
             if(iachar(s(p:p)) == minus_sign+digit_0 ) then
                 sign = -1
-                p = p + 1
-            else if(iachar(s(p:p)) == plus_sign+digit_0 ) then
                 p = p + 1
             end if
         else
@@ -373,13 +369,11 @@ module stdlib_str2num
         ! Find first non white space
         p = shift_to_nonwhitespace(s)
         !----------------------------------------------
-        ! Verify leading sign
+        ! Verify leading negative
         sign = 1
         if(p<=len(s)) then
             if(iachar(s(p:p)) == minus_sign+digit_0 ) then
                 sign = -1
-                p = p + 1
-            else if(iachar(s(p:p)) == plus_sign+digit_0 ) then
                 p = p + 1
             end if
         else
@@ -419,13 +413,11 @@ module stdlib_str2num
         ! Find first non white space
         p = shift_to_nonwhitespace(s)
         !----------------------------------------------
-        ! Verify leading sign
+        ! Verify leading negative
         sign = 1
         if(p<=len(s)) then
             if(iachar(s(p:p)) == minus_sign+digit_0 ) then
                 sign = -1
-                p = p + 1
-            else if(iachar(s(p:p)) == plus_sign+digit_0 ) then
                 p = p + 1
             end if
         else
@@ -482,12 +474,10 @@ module stdlib_str2num
         ! Find first non white space
         p = shift_to_nonwhitespace(s)
         !----------------------------------------------
-        ! Verify leading sign
+        ! Verify leading negative
         sign = 1
         if( iachar(s(p:p)) == minus_sign+digit_0 ) then
             sign = -1
-            p = p + 1
-        else if( iachar(s(p:p)) == plus_sign+digit_0 ) then
             p = p + 1
         end if
         if( iachar(s(p:p)) == Inf ) then
@@ -582,12 +572,10 @@ module stdlib_str2num
         ! Find first non white space
         p = shift_to_nonwhitespace(s)
         !----------------------------------------------
-        ! Verify leading sign
+        ! Verify leading negative
         sign = 1
         if( iachar(s(p:p)) == minus_sign+digit_0 ) then
             sign = -1
-            p = p + 1
-        else if( iachar(s(p:p)) == plus_sign+digit_0 ) then
             p = p + 1
         end if
         if( iachar(s(p:p)) == Inf ) then
