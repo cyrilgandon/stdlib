@@ -10,6 +10,7 @@ set(strings_cppFiles
     )
 
 set(strings_f90Files
+    stdlib_stringbuilder.f90
     )
 
 configure_stdlib_target(${PROJECT_NAME}_strings strings_f90Files strings_fppFiles strings_cppFiles)
