@@ -8,7 +8,8 @@ module test_specialfunctions_gamma
                                              log_lower_incomplete_gamma,       &
                                              log_upper_incomplete_gamma,       &
                                              regularized_gamma_p,              &
-                                             regularized_gamma_q
+                                             regularized_gamma_q,              &
+                                             beta, log_beta, incomplete_beta
 
     implicit none
     private
@@ -169,6 +170,12 @@ contains
                            test_gamma_p_rsp)                       &
             , new_unittest("regularized_gamma_q_rsp",              &
                            test_gamma_q_rsp)                       &
+            , new_unittest("beta_rsp",                             &
+                           test_beta_rsp)                          &
+            , new_unittest("log_beta_rsp",                         &
+                           test_log_beta_rsp)                      &
+            , new_unittest("incomplete_beta_rsp",                  &
+                           test_incomplete_beta_rsp)               &
             , new_unittest("lower_incomplete_gamma_rdp",           &
                            test_lincgamma_rdp)                     &
             , new_unittest("log_lower_incomplete_gamma_rdp",       &
@@ -181,6 +188,12 @@ contains
                            test_gamma_p_rdp)                       &
             , new_unittest("regularized_gamma_q_rdp",              &
                            test_gamma_q_rdp)                       &
+            , new_unittest("beta_rdp",                             &
+                           test_beta_rdp)                          &
+            , new_unittest("log_beta_rdp",                         &
+                           test_log_beta_rdp)                      &
+            , new_unittest("incomplete_beta_rdp",                  &
+                           test_incomplete_beta_rdp)               &
             ]
     end subroutine collect_specialfunctions_gamma
 
@@ -703,8 +716,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int8), parameter :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.93275212956718857_sp,            &
                                        -0.14605314979599791_sp,            &
@@ -728,8 +741,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int8), parameter :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.13588822540043325_sp,             &
@@ -753,8 +766,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int8), parameter :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.5_sp, -1.9959226032237259_sp,&
                                        7.8332133440562161_sp,              &
@@ -777,8 +790,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int8), parameter :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.39346934028736658_sp,             &
                                        0.77686983985157017_sp,             &
@@ -800,8 +813,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int8), parameter :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.22313016014842983_sp,             &
@@ -846,8 +859,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int8), parameter :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.93275212956718857_dp,            &
                                        -0.14605314979599791_dp,            &
@@ -871,8 +884,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int8), parameter :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.13588822540043325_dp,             &
@@ -896,8 +909,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int8), parameter :: p(n) = [1_int8, 2_int8, 3_int8, 2_int8]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.5_dp, -1.9959226032237259_dp,&
                                        7.8332133440562161_dp,              &
@@ -920,8 +933,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int8), parameter :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.39346934028736658_dp,             &
                                        0.77686983985157017_dp,             &
@@ -943,8 +956,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int8) :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int8), parameter :: p(n) = [1_int8, 1_int8, 3_int8, 3_int8]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.22313016014842983_dp,             &
@@ -989,8 +1002,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int16), parameter :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.93275212956718857_sp,            &
                                        -0.14605314979599791_sp,            &
@@ -1014,8 +1027,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int16), parameter :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.13588822540043325_sp,             &
@@ -1039,8 +1052,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int16), parameter :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.5_sp, -1.9959226032237259_sp,&
                                        7.8332133440562161_sp,              &
@@ -1063,8 +1076,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int16), parameter :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.39346934028736658_sp,             &
                                        0.77686983985157017_sp,             &
@@ -1086,8 +1099,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int16), parameter :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.22313016014842983_sp,             &
@@ -1132,8 +1145,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int16), parameter :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.93275212956718857_dp,            &
                                        -0.14605314979599791_dp,            &
@@ -1157,8 +1170,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int16), parameter :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.13588822540043325_dp,             &
@@ -1182,8 +1195,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int16), parameter :: p(n) = [1_int16, 2_int16, 3_int16, 2_int16]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.5_dp, -1.9959226032237259_dp,&
                                        7.8332133440562161_dp,              &
@@ -1206,8 +1219,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int16), parameter :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.39346934028736658_dp,             &
                                        0.77686983985157017_dp,             &
@@ -1229,8 +1242,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int16) :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int16), parameter :: p(n) = [1_int16, 1_int16, 3_int16, 3_int16]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.22313016014842983_dp,             &
@@ -1275,8 +1288,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int32), parameter :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.93275212956718857_sp,            &
                                        -0.14605314979599791_sp,            &
@@ -1300,8 +1313,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int32), parameter :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.13588822540043325_sp,             &
@@ -1325,8 +1338,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int32), parameter :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.5_sp, -1.9959226032237259_sp,&
                                        7.8332133440562161_sp,              &
@@ -1349,8 +1362,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int32), parameter :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.39346934028736658_sp,             &
                                        0.77686983985157017_sp,             &
@@ -1372,8 +1385,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int32), parameter :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.22313016014842983_sp,             &
@@ -1418,8 +1431,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int32), parameter :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.93275212956718857_dp,            &
                                        -0.14605314979599791_dp,            &
@@ -1443,8 +1456,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int32), parameter :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.13588822540043325_dp,             &
@@ -1468,8 +1481,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int32), parameter :: p(n) = [1_int32, 2_int32, 3_int32, 2_int32]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.5_dp, -1.9959226032237259_dp,&
                                        7.8332133440562161_dp,              &
@@ -1492,8 +1505,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int32), parameter :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.39346934028736658_dp,             &
                                        0.77686983985157017_dp,             &
@@ -1515,8 +1528,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int32) :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int32), parameter :: p(n) = [1_int32, 1_int32, 3_int32, 3_int32]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.22313016014842983_dp,             &
@@ -1561,8 +1574,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int64), parameter :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.93275212956718857_sp,            &
                                        -0.14605314979599791_sp,            &
@@ -1586,8 +1599,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int64), parameter :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.13588822540043325_sp,             &
@@ -1611,8 +1624,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
+        integer(int64), parameter :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, -5.0_sp, -10.0_sp]
 
         real(sp), parameter :: ans(n) = [-0.5_sp, -1.9959226032237259_sp,&
                                        7.8332133440562161_sp,              &
@@ -1635,8 +1648,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int64), parameter :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.39346934028736658_sp,             &
                                        0.77686983985157017_sp,             &
@@ -1658,8 +1671,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
-        real(sp) :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
+        integer(int64), parameter :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
+        real(sp), parameter :: x(n) = [0.5_sp, 1.5_sp, 0.5_sp, 3.5_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.22313016014842983_sp,             &
@@ -1704,8 +1717,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int64), parameter :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.93275212956718857_dp,            &
                                        -0.14605314979599791_dp,            &
@@ -1729,8 +1742,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int64), parameter :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.13588822540043325_dp,             &
@@ -1754,8 +1767,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
+        integer(int64), parameter :: p(n) = [1_int64, 2_int64, 3_int64, 2_int64]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, -5.0_dp, -10.0_dp]
 
         real(dp), parameter :: ans(n) = [-0.5_dp, -1.9959226032237259_dp,&
                                        7.8332133440562161_dp,              &
@@ -1778,8 +1791,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int64), parameter :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.39346934028736658_dp,             &
                                        0.77686983985157017_dp,             &
@@ -1801,8 +1814,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        integer(int64) :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
-        real(dp) :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
+        integer(int64), parameter :: p(n) = [1_int64, 1_int64, 3_int64, 3_int64]
+        real(dp), parameter :: x(n) = [0.5_dp, 1.5_dp, 0.5_dp, 3.5_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.22313016014842983_dp,             &
@@ -1822,12 +1835,83 @@ contains
 
 
 
+    subroutine test_beta_rsp(error)
+        type(error_type), allocatable, intent(out) :: error
+        integer, parameter :: n = 3
+        integer :: i
+        real(sp), parameter :: a(n) = [2.0_sp, 1.0_sp, 0.5_sp]
+        real(sp), parameter :: b(n) = [3.0_sp, 1.0_sp, 0.5_sp]
+
+        real(sp), parameter :: ans(n) = [1.0_sp/12.0_sp,                 &
+                                       1.0_sp,                             &
+                                       acos(-1.0_sp)]
+
+        do i = 1, n
+
+            call check(error, beta(a(i), b(i)), ans(i),                        &
+              "Beta function with a(kind=sp) and b(kind=sp) failed",  &
+              thr = tol_sp, rel = .true.)
+                        if (allocated(error)) return
+
+        end do
+    end subroutine test_beta_rsp
+
+
+
+    subroutine test_log_beta_rsp(error)
+        type(error_type), allocatable, intent(out) :: error
+        integer, parameter :: n = 3
+        integer :: i
+        character(len=120) :: msg
+        real(sp), parameter :: a(n) = [2.0_sp, 1.0_sp, 0.5_sp]
+        real(sp), parameter :: b(n) = [3.0_sp, 1.0_sp, 0.5_sp]
+
+        real(sp), parameter :: ans(n) = [log(1.0_sp/12.0_sp),            &
+                                       0.0_sp,                             &
+                                       log(acos(-1.0_sp))]
+
+        do i = 1, n
+                        write(msg, '(a,i0)') "Log-beta function with a(kind=sp) and b(kind=sp) failed at i=", i
+
+            call check(error, log_beta(a(i), b(i)), ans(i),                    &
+                            msg,                                                              &
+              thr = tol_sp, rel = .true.)
+                        if (allocated(error)) return
+
+        end do
+    end subroutine test_log_beta_rsp
+
+
+
+    subroutine test_incomplete_beta_rsp(error)
+        type(error_type), allocatable, intent(out) :: error
+        integer, parameter :: n = 4
+        integer :: i
+        real(sp), parameter :: x(n) = [0.25_sp, 0.5_sp, 0.0_sp, 1.0_sp]
+        real(sp), parameter :: a(n) = [2.0_sp, 2.0_sp, 2.0_sp, 2.0_sp]
+        real(sp), parameter :: b(n) = [3.0_sp, 3.0_sp, 3.0_sp, 3.0_sp]
+
+        real(sp), parameter :: ans(n) = [67.0_sp/256.0_sp,               &
+                                       11.0_sp/16.0_sp,                &
+                                       0.0_sp,                             &
+                                       1.0_sp]
+
+        do i = 1, n
+
+            call check(error, incomplete_beta(x(i), a(i), b(i)), ans(i),       &
+              "Incomplete beta I_x(a,b) with kind=sp failed",             &
+              thr = tol_sp, rel = .true.)
+                        if (allocated(error)) return
+
+        end do
+    end subroutine test_incomplete_beta_rsp
+
     subroutine test_lincgamma_rsp(error)
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(sp) :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
+        real(sp), parameter :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
 
         real(sp), parameter :: ans(n) = [0.3934693402873667_sp,              &
                                        0.86411177459956675_sp,             &
@@ -1850,8 +1934,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(sp) :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
+        real(sp), parameter :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
 
         real(sp), parameter :: ans(n) = [-0.93275212956718857_sp,            &
                                        -0.14605314979599791_sp,            &
@@ -1875,8 +1959,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(sp) :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
+        real(sp), parameter :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
 
         real(sp), parameter :: ans(n) = [0.60653065971263342_sp,             &
                                        0.13588822540043325_sp,             &
@@ -1900,8 +1984,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(sp) :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
-        real(sp) :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
+        real(sp), parameter :: p(n) = [1.0_sp, 2.0_sp, 3.1_sp, 6.5_sp]
+        real(sp), parameter :: x(n) = [0.5_sp, 3.5_sp, 5.0_sp, 3.2_sp]
 
         real(sp), parameter :: ans(n) = [-0.5_sp, -1.9959226032237259_sp,&
                                        -1.2054260888453405_sp,             &
@@ -1923,8 +2007,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(sp) :: p(n) = [1.3_sp, 1.3_sp, 3.7_sp, 3.7_sp]
-        real(sp) :: x(n) = [0.5_sp, 2.1_sp, 2.6_sp, 5.1_sp]
+        real(sp), parameter :: p(n) = [1.3_sp, 1.3_sp, 3.7_sp, 3.7_sp]
+        real(sp), parameter :: x(n) = [0.5_sp, 2.1_sp, 2.6_sp, 5.1_sp]
 
         real(sp), parameter :: ans(n) = [0.26487356764588505_sp,             &
                                        0.81011791338807457_sp,             &
@@ -1946,8 +2030,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(sp) :: p(n) = [1.3_sp, 1.3_sp, 3.7_sp, 3.7_sp]
-        real(sp) :: x(n) = [0.5_sp, 2.1_sp, 2.6_sp, 5.1_sp]
+        real(sp), parameter :: p(n) = [1.3_sp, 1.3_sp, 3.7_sp, 3.7_sp]
+        real(sp), parameter :: x(n) = [0.5_sp, 2.1_sp, 2.6_sp, 5.1_sp]
 
         real(sp), parameter :: ans(n) = [0.73512643235411495_sp,             &
                                        0.18988208661192543_sp,             &
@@ -1964,12 +2048,85 @@ contains
     end subroutine test_gamma_q_rsp
 
 
+
+
+    subroutine test_beta_rdp(error)
+        type(error_type), allocatable, intent(out) :: error
+        integer, parameter :: n = 3
+        integer :: i
+        real(dp), parameter :: a(n) = [2.0_dp, 1.0_dp, 0.5_dp]
+        real(dp), parameter :: b(n) = [3.0_dp, 1.0_dp, 0.5_dp]
+
+        real(dp), parameter :: ans(n) = [1.0_dp/12.0_dp,                 &
+                                       1.0_dp,                             &
+                                       acos(-1.0_dp)]
+
+        do i = 1, n
+
+            call check(error, beta(a(i), b(i)), ans(i),                        &
+              "Beta function with a(kind=dp) and b(kind=dp) failed",  &
+              thr = tol_dp, rel = .true.)
+                        if (allocated(error)) return
+
+        end do
+    end subroutine test_beta_rdp
+
+
+
+    subroutine test_log_beta_rdp(error)
+        type(error_type), allocatable, intent(out) :: error
+        integer, parameter :: n = 3
+        integer :: i
+        character(len=120) :: msg
+        real(dp), parameter :: a(n) = [2.0_dp, 1.0_dp, 0.5_dp]
+        real(dp), parameter :: b(n) = [3.0_dp, 1.0_dp, 0.5_dp]
+
+        real(dp), parameter :: ans(n) = [log(1.0_dp/12.0_dp),            &
+                                       0.0_dp,                             &
+                                       log(acos(-1.0_dp))]
+
+        do i = 1, n
+                        write(msg, '(a,i0)') "Log-beta function with a(kind=dp) and b(kind=dp) failed at i=", i
+
+            call check(error, log_beta(a(i), b(i)), ans(i),                    &
+                            msg,                                                              &
+              thr = tol_dp, rel = .true.)
+                        if (allocated(error)) return
+
+        end do
+    end subroutine test_log_beta_rdp
+
+
+
+    subroutine test_incomplete_beta_rdp(error)
+        type(error_type), allocatable, intent(out) :: error
+        integer, parameter :: n = 4
+        integer :: i
+        real(dp), parameter :: x(n) = [0.25_dp, 0.5_dp, 0.0_dp, 1.0_dp]
+        real(dp), parameter :: a(n) = [2.0_dp, 2.0_dp, 2.0_dp, 2.0_dp]
+        real(dp), parameter :: b(n) = [3.0_dp, 3.0_dp, 3.0_dp, 3.0_dp]
+
+        real(dp), parameter :: ans(n) = [67.0_dp/256.0_dp,               &
+                                       11.0_dp/16.0_dp,                &
+                                       0.0_dp,                             &
+                                       1.0_dp]
+
+        do i = 1, n
+
+            call check(error, incomplete_beta(x(i), a(i), b(i)), ans(i),       &
+              "Incomplete beta I_x(a,b) with kind=dp failed",             &
+              thr = tol_dp, rel = .true.)
+                        if (allocated(error)) return
+
+        end do
+    end subroutine test_incomplete_beta_rdp
+
     subroutine test_lincgamma_rdp(error)
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(dp) :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
+        real(dp), parameter :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
 
         real(dp), parameter :: ans(n) = [0.3934693402873667_dp,              &
                                        0.86411177459956675_dp,             &
@@ -1992,8 +2149,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(dp) :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
+        real(dp), parameter :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
 
         real(dp), parameter :: ans(n) = [-0.93275212956718857_dp,            &
                                        -0.14605314979599791_dp,            &
@@ -2017,8 +2174,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(dp) :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
+        real(dp), parameter :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
 
         real(dp), parameter :: ans(n) = [0.60653065971263342_dp,             &
                                        0.13588822540043325_dp,             &
@@ -2042,8 +2199,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(dp) :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
-        real(dp) :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
+        real(dp), parameter :: p(n) = [1.0_dp, 2.0_dp, 3.1_dp, 6.5_dp]
+        real(dp), parameter :: x(n) = [0.5_dp, 3.5_dp, 5.0_dp, 3.2_dp]
 
         real(dp), parameter :: ans(n) = [-0.5_dp, -1.9959226032237259_dp,&
                                        -1.2054260888453405_dp,             &
@@ -2065,8 +2222,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(dp) :: p(n) = [1.3_dp, 1.3_dp, 3.7_dp, 3.7_dp]
-        real(dp) :: x(n) = [0.5_dp, 2.1_dp, 2.6_dp, 5.1_dp]
+        real(dp), parameter :: p(n) = [1.3_dp, 1.3_dp, 3.7_dp, 3.7_dp]
+        real(dp), parameter :: x(n) = [0.5_dp, 2.1_dp, 2.6_dp, 5.1_dp]
 
         real(dp), parameter :: ans(n) = [0.26487356764588505_dp,             &
                                        0.81011791338807457_dp,             &
@@ -2088,8 +2245,8 @@ contains
         type(error_type), allocatable, intent(out) :: error
         integer, parameter :: n = 4
         integer :: i
-        real(dp) :: p(n) = [1.3_dp, 1.3_dp, 3.7_dp, 3.7_dp]
-        real(dp) :: x(n) = [0.5_dp, 2.1_dp, 2.6_dp, 5.1_dp]
+        real(dp), parameter :: p(n) = [1.3_dp, 1.3_dp, 3.7_dp, 3.7_dp]
+        real(dp), parameter :: x(n) = [0.5_dp, 2.1_dp, 2.6_dp, 5.1_dp]
 
         real(dp), parameter :: ans(n) = [0.73512643235411495_dp,             &
                                        0.18988208661192543_dp,             &
